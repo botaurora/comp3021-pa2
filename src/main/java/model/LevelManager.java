@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -56,8 +57,8 @@ public class LevelManager {
      */
     public void loadLevelNamesFromDisk() {
         // TODO(Derppening): Check
-        try (var stream = Files.walk(Paths.get(mapDirectory), 1)) {
-            var files = stream.filter(f -> f.toFile().isFile()).map(Path::toString).collect(Collectors.toList());
+        try (Stream<Path> stream = Files.walk(Paths.get(mapDirectory), 1)) {
+            List<String> files = stream.filter(f -> f.toFile().isFile()).map(Path::toString).collect(Collectors.toList());
             levelNames.addAll(files);
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,7 +151,7 @@ public class LevelManager {
     public String getNextLevelName() {
         // TODO(Derppening): Check
 
-        var i = levelNames.indexOf(curLevelNameProperty.toString());
+        int i = levelNames.indexOf(curLevelNameProperty.toString());
         if (i == -1) {
             throw new IllegalStateException("Current Level Name is not in Level Names list!");
         }

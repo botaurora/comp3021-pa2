@@ -46,6 +46,8 @@ public class LevelEditorPane extends BorderPane {
     public LevelEditorPane() {
         // TODO
         levelEditor = new LevelEditorCanvas(5, 5);
+
+        // TODO(Derppening): Fix NPE
         rowField.replaceSelection("5");
         colField.replaceSelection("5");
         brushList.addAll(Brush.values());

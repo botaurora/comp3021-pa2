@@ -44,11 +44,11 @@ public class MapRenderer {
         }
     }
 
-    private final static Map<Class<? extends Tile>, TileImageMapping> IMAGE_MAPPING = new HashMap<>() {{
+    private final static Map<Class<? extends Tile>, TileImageMapping> IMAGE_MAPPING = new HashMap<Class<? extends Tile>, TileImageMapping>() {{
         put(Tile.class, new TileImageMapping(tile, crateOnTile, playerOnTile));
         put(DestTile.class, new TileImageMapping(dest, crateOnDest, playerOnDest));
     }};
-    private final static Map<LevelEditorCanvas.Brush, Image> BRUSH_IMAGE_MAP = new HashMap<>() {{
+    private final static Map<LevelEditorCanvas.Brush, Image> BRUSH_IMAGE_MAP = new HashMap<LevelEditorCanvas.Brush, Image>() {{
         put(LevelEditorCanvas.Brush.CRATE_ON_DEST, crateOnDest);
         put(LevelEditorCanvas.Brush.CRATE_ON_TILE, crateOnTile);
         put(LevelEditorCanvas.Brush.DEST, dest);
@@ -130,7 +130,7 @@ public class MapRenderer {
             image = IMAGE_MAPPING.get(t.getClass()).tileWithCrate;
         } else if (t.getOccupant().orElse(null) instanceof Player) {
             image = IMAGE_MAPPING.get(t.getClass()).tileWithPlayer;
-        } else if (t.getOccupant().isEmpty()) {
+        } else if (!t.getOccupant().isPresent()) {
             image = IMAGE_MAPPING.get(t.getClass()).tile;
         } else {
             throw new IllegalArgumentException("No asset for unknown occupant type");

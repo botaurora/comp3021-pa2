@@ -46,11 +46,11 @@ public class AudioManager {
      */
     private void playFile(String name) {
         //TODO
-        var player = new MediaPlayer(new Media(name + ".mp3"));
+        MediaPlayer player = new MediaPlayer(new Media(name + ".mp3"));
 
         player.onEndOfMediaProperty().setValue(() -> {
             soundPool.remove(player);
-            var t = new Thread(player::dispose);
+            Thread t = new Thread(player::dispose);
             t.setDaemon(true);
             t.start();
         });
