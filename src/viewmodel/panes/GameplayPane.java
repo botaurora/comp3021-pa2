@@ -36,6 +36,7 @@ public class GameplayPane extends BorderPane {
      */
     public GameplayPane() {
         //TODO
+        info = new GameplayInfoPane(null, null, null, null);
     }
 
     /**

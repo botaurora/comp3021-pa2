@@ -1,5 +1,5 @@
 module PA2 {
-        requires javafx.controls;
-        requires javafx.media;
-        exports main;
+    requires javafx.controls;
+    requires javafx.media;
+    exports main;
 }

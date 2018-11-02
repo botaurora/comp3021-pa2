@@ -44,7 +44,11 @@ public class LevelEditorPane extends BorderPane {
      * Use 20 for VBox spacing
      */
     public LevelEditorPane() {
-        //TODO
+        // TODO
+        levelEditor = new LevelEditorCanvas(5, 5);
+        rowField.replaceSelection("5");
+        colField.replaceSelection("5");
+        brushList.addAll(Brush.values());
     }
 
     /**

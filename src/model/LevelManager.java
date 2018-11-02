@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -54,7 +55,14 @@ public class LevelManager {
      * Hints: Files.walk(Paths.get(mapDirectory), 1) returns a Stream of files 1 folder deep
      */
     public void loadLevelNamesFromDisk() {
-        //TODO
+        // TODO(Derppening): Check
+        try (var stream = Files.walk(Paths.get(mapDirectory), 1)) {
+            var files = stream.filter(f -> f.toFile().isFile()).map(Path::toString).collect(Collectors.toList());
+            levelNames.addAll(files);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e.getMessage());
+        }
     }
 
     public ObservableList<String> getLevelNames() {
@@ -76,7 +84,23 @@ public class LevelManager {
      * @throws InvalidMapException if the map was invalid
      */
     public void setLevel(String levelName) throws InvalidMapException {
-        //TODO
+        // TODO(Derppening): Check
+
+        // Reset everything
+        resetLevelTimer();
+        resetNumRestarts();
+
+        if (levelName == null) {
+            // what will i do? :(
+            throw new NullPointerException("levelName is null");
+        }
+
+        try {
+            gameLevel.loadMap(levelName);
+        } catch (InvalidMapException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**
@@ -86,7 +110,14 @@ public class LevelManager {
      * {@link javafx.application.Platform#runLater(Runnable)} are required
      */
     public void startLevelTimer() {
-        //TODO
+        // TODO(Derppening): Check
+        t.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                curGameLevelExistedDuration.add(1);
+            }
+        }, 0, 1000);
+        Platform.runLater(this::startLevelTimer);
     }
 
     /**
@@ -117,8 +148,18 @@ public class LevelManager {
      * name is always valid.
      */
     public String getNextLevelName() {
-        //TODO
-        return null;//NOTE: You may also change this line
+        // TODO(Derppening): Check
+
+        var i = levelNames.indexOf(curLevelNameProperty.toString());
+        if (i == -1) {
+            throw new IllegalStateException("Current Level Name is not in Level Names list!");
+        }
+
+        if (i + 1 < levelNames.size()) {
+            return levelNames.get(i + 1);
+        } else {
+            return null;
+        }
     }
 
     public IntegerProperty curGameLevelExistedDurationProperty() {

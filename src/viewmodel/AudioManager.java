@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AudioManager {
     private static AudioManager instance = new AudioManager();
     //keep a reference to the sound until it finishes playing, to prevent GC from prematurely recollecting it
-    private final Set<MediaPlayer> soundPool = Collections.newSetFromMap(new ConcurrentHashMap<MediaPlayer, Boolean>());
+    private final Set<MediaPlayer> soundPool = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private boolean enabled = true;
 
     private AudioManager() {
@@ -46,6 +46,17 @@ public class AudioManager {
      */
     private void playFile(String name) {
         //TODO
+        var player = new MediaPlayer(new Media(name + ".mp3"));
+
+        player.onEndOfMediaProperty().setValue(() -> {
+            soundPool.remove(player);
+            var t = new Thread(player::dispose);
+            t.setDaemon(true);
+            t.start();
+        });
+
+        soundPool.add(player);
+        player.play();
     }
 
     public void playMoveSound() {
