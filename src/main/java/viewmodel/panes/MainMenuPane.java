@@ -57,7 +57,6 @@ public class MainMenuPane extends BorderPane {
      */
     private void styleComponents() {
         container.getStyleClass().add("big-vbox");
-        title.getStyleClass().add("root");
 
         for (Button b : Arrays.asList(playButton, levelEditorButton, settingsButton, quitButton)) {
             b.getStyleClass().add("big-button");
