@@ -1,5 +1,6 @@
 package viewmodel;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -17,7 +18,12 @@ public class Config {
     static {
         final URL styleUrl = Thread.currentThread().getContextClassLoader().getResource("assets/css/styles.css");
         assert styleUrl != null;
-        CSS_STYLES = styleUrl.toExternalForm();
+        try {
+            CSS_STYLES = styleUrl.toURI().toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Cannot load styles.css");
+        }
     }
 
     public static String getAboutText() {

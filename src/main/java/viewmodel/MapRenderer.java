@@ -59,7 +59,7 @@ public class MapRenderer {
     }};
 
     static {
-        try {
+        /*try {
             wall = new Image(MapRenderer.class.getResource("/assets/images/wall.png").toURI().toString());
             crateOnTile = new Image(MapRenderer.class.getResource("/assets/images/crateOnTile.png").toURI().toString());
             crateOnDest = new Image(MapRenderer.class.getResource("/assets/images/crateOnDest.png").toURI().toString());
@@ -69,6 +69,21 @@ public class MapRenderer {
             tile = new Image(MapRenderer.class.getResource("/assets/images/tile.png").toURI().toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        }*/
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+            // TODO(Derppening): Refactor this later
+            wall = new Image(loader.getResource("assets/images/wall.png").toURI().toString());
+            crateOnTile = new Image(loader.getResource("assets/images/crateOnTile.png").toURI().toString());
+            crateOnDest = new Image(loader.getResource("assets/images/crateOnDest.png").toURI().toString());
+            playerOnTile = new Image(loader.getResource("assets/images/playerOnTile.png").toURI().toString());
+            playerOnDest = new Image(MapRenderer.class.getResource("assets/images/playerOnDest.png").toURI().toString());
+            dest = new Image(MapRenderer.class.getResource("assets/images/dest.png").toURI().toString());
+            tile = new Image(MapRenderer.class.getResource("assets/images/tile.png").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Cannot load image resources");
         }
     }
 
