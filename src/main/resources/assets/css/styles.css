@@ -1,5 +1,6 @@
 .root {
-    -fx-font-family: "Courier New";
+    /*-fx-font-family: "Courier New";*/
+    -fx-font-family: monospace;
 }
 
 Label {
@@ -8,7 +9,8 @@ Label {
 
 Button {
     -fx-font-size: 15;
-    -fx-font-family: "Arial";
+    /*-fx-font-family: "Arial";*/
+    -fx-font-family: sans-serif;
 }
 
 VBox, HBox {
@@ -40,7 +42,8 @@ VBox, HBox {
 
 .big-button {
     -fx-font-size: 15;
-    -fx-font-family: "Arial";
+    /*-fx-font-family: "Arial";*/
+    -fx-font-family: sans-serif;
     -fx-pref-width: 200;
     -fx-pref-height: 40;
     -fx-background-radius: 16px;

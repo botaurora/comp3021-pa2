@@ -7,6 +7,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import viewmodel.SceneManager;
 
+import java.util.Arrays;
+
 /**
  * Represents the main menu in the game
  */
@@ -23,7 +25,16 @@ public class MainMenuPane extends BorderPane {
      * Instantiate the member components and connect and style them. Also set the callbacks.
      */
     public MainMenuPane() {
-        //TODO
+        container = new VBox();
+        title = new Label("Sokoban");
+        playButton = new Button("Play");
+        levelEditorButton = new Button("Level Editor");
+        settingsButton = new Button("About / Settings");
+        quitButton = new Button("Quit");
+
+        connectComponents();
+        styleComponents();
+        setCallbacks();
     }
 
     /**
@@ -45,13 +56,21 @@ public class MainMenuPane extends BorderPane {
      * Apply CSS styling to components.
      */
     private void styleComponents() {
-        //TODO
+        container.getStyleClass().add("big-vbox");
+        title.getStyleClass().add("root");
+
+        for (Button b : Arrays.asList(playButton, levelEditorButton, settingsButton, quitButton)) {
+            b.getStyleClass().add("big-button");
+        }
     }
 
     /**
      * Set the event handlers for the 4 buttons, 3 of which switch to different scene, and 1 of which exits the program.
      */
     private void setCallbacks() {
-        //TODO
+        playButton.setOnAction(event -> SceneManager.getInstance().showGamePlayScene());
+        levelEditorButton.setOnAction(event -> SceneManager.getInstance().showLevelEditorScene());
+        settingsButton.setOnAction(event -> SceneManager.getInstance().showSettingsMenuScene());
+        quitButton.setOnAction(event -> Platform.exit());
     }
 }
