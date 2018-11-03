@@ -5,6 +5,7 @@ repositories {
 plugins {
     application
     id("com.google.osdetector") version "1.6.0"
+    id("org.jetbrains.intellij") version "0.3.12"
 }
 
 application {
@@ -15,6 +16,10 @@ java {
     // TODO(Derppening): Test with Java 10 before submitting!
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+intellij {
+    instrumentCode = true
 }
 
 val platform: String = when (osdetector.os) {
@@ -31,6 +36,8 @@ dependencies {
 //    compile("org.openjfx:javafx-controls:11:$platform")
 //    compile("org.openjfx:javafx-graphics:11:$platform")
 //    compile("org.openjfx:javafx-media:11:$platform")
+
+    compile("org.jetbrains:annotations:16.0.3")
 }
 
 tasks {
@@ -56,6 +63,8 @@ tasks {
     }
 
     register("fatJar", Jar::class) {
+        dependsOn("jar")
+
         manifest {
             attributes.apply {
                 this["Implementation-Title"] = "PA2"
