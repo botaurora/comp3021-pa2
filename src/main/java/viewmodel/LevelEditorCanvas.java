@@ -1,5 +1,6 @@
 package viewmodel;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
@@ -32,7 +33,9 @@ public class LevelEditorCanvas extends Canvas {
      * @param cols The number of tiles in the map
      */
     public LevelEditorCanvas(int rows, int cols) {
-        //TODO
+        super();
+
+        resetMap(rows, cols);
     }
 
     /**
@@ -55,14 +58,22 @@ public class LevelEditorCanvas extends Canvas {
      * @param cols The numbers of cols in the map
      */
     private void resetMap(int rows, int cols) {
-        //TODO
+        this.rows = rows;
+        this.cols = cols;
+
+        map = new Brush[rows][cols];
+        for (Brush[] brushes : map) {
+            Arrays.fill(brushes, Brush.TILE);
+        }
+
+        renderCanvas();
     }
 
     /**
      * Render the map using {@link MapRenderer}
      */
     private void renderCanvas() {
-        //TODO
+        Platform.runLater(() -> MapRenderer.render(this, map));
     }
 
     /**
@@ -85,7 +96,44 @@ public class LevelEditorCanvas extends Canvas {
      * @param y     Mouse click coordinate y
      */
     public void setTile(Brush brush, double x, double y) {
-        //TODO
+        int mappedR = (int) Math.floor(y) / LEVEL_EDITOR_TILE_SIZE;
+        int mappedC = (int) Math.floor(x) / LEVEL_EDITOR_TILE_SIZE;
+
+        if (brush.equals(Brush.PLAYER_ON_DEST) || brush.equals(Brush.PLAYER_ON_TILE)) {
+            if (oldPlayerCol != -1 || oldPlayerRow != -1) {
+                map[oldPlayerRow][oldPlayerCol] = togglePlayerOnTile(brush);
+            }
+
+            map[mappedR][mappedC] = togglePlayerOnTile(brush);
+            oldPlayerRow = mappedR;
+            oldPlayerCol = mappedC;
+        } else {
+            map[mappedR][mappedC] = brush;
+        }
+
+        renderCanvas();
+    }
+
+    /**
+     * Toggles the presence of player on a brush tile.
+     *
+     * If the tile already has a non-player occupying or the tile is a wall, has no effect.
+     *
+     * @param brush Original brush item.
+     * @return New brush item with the player removed if originally present, or the player added if originally absent.
+     */
+    private Brush togglePlayerOnTile(Brush brush) {
+        if (brush.equals(Brush.TILE)) {
+            return Brush.PLAYER_ON_TILE;
+        } else if (brush.equals(Brush.PLAYER_ON_TILE)) {
+            return Brush.TILE;
+        } else if (brush.equals(Brush.PLAYER_ON_DEST)) {
+            return Brush.DEST;
+        } else if (brush.equals(Brush.DEST)) {
+            return Brush.PLAYER_ON_DEST;
+        } else {
+            return brush;
+        }
     }
 
     /**

@@ -9,8 +9,10 @@ import model.Map.Occupant.Player;
 import model.Map.Occupiable.DestTile;
 import model.Map.Occupiable.Occupiable;
 import model.Map.Occupiable.Tile;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,50 @@ public class MapRenderer {
     private static Image dest = null;
     private static Image tile = null;
 
+    static {
+        /*try {
+            wall = new Image(MapRenderer.class.getResource("/assets/images/wall.png").toURI().toString());
+            crateOnTile = new Image(MapRenderer.class.getResource("/assets/images/crateOnTile.png").toURI().toString());
+            crateOnDest = new Image(MapRenderer.class.getResource("/assets/images/crateOnDest.png").toURI().toString());
+            playerOnTile = new Image(MapRenderer.class.getResource("/assets/images/playerOnTile.png").toURI().toString());
+            playerOnDest = new Image(MapRenderer.class.getResource("/assets/images/playerOnDest.png").toURI().toString());
+            dest = new Image(MapRenderer.class.getResource("/assets/images/dest.png").toURI().toString());
+            tile = new Image(MapRenderer.class.getResource("/assets/images/tile.png").toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }*/
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+            URL wallRes = loader.getResource("assets/images/wall.png");
+            URL crateOnTileRes = loader.getResource("assets/images/crateOnTile.png");
+            URL crateOnDestRes = loader.getResource("assets/images/crateOnDest.png");
+            URL playerOnTileRes = loader.getResource("assets/images/playerOnTile.png");
+            URL playerOnDestRes = loader.getResource("assets/images/playerOnDest.png");
+            URL destRes = loader.getResource("assets/images/dest.png");
+            URL tileRes = loader.getResource("assets/images/tile.png");
+
+            assert wallRes != null;
+            assert crateOnTileRes != null;
+            assert crateOnDestRes != null;
+            assert playerOnTileRes != null;
+            assert playerOnDestRes != null;
+            assert destRes != null;
+            assert tileRes != null;
+
+            wall = new Image(wallRes.toURI().toString());
+            crateOnTile = new Image(crateOnTileRes.toURI().toString());
+            crateOnDest = new Image(crateOnDestRes.toURI().toString());
+            playerOnTile = new Image(playerOnTileRes.toURI().toString());
+            playerOnDest = new Image(playerOnDestRes.toURI().toString());
+            dest = new Image(destRes.toURI().toString());
+            tile = new Image(tileRes.toURI().toString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Cannot load image resources");
+        }
+    }
+
     private static class TileImageMapping {
         private Image tile;
         private Image tileWithCrate;
@@ -40,7 +86,10 @@ public class MapRenderer {
             this.tileWithCrate = withCrate;
             this.tileWithPlayer = withPlayer;
 
-            // TODO(Derppening): Add post-condition assertions
+            assert this.tile.getWidth() == tileWithCrate.getWidth();
+            assert this.tile.getHeight() == tileWithCrate.getHeight();
+            assert this.tile.getWidth() == tileWithPlayer.getWidth();
+            assert this.tile.getHeight() == tileWithPlayer.getHeight();
         }
     }
 
@@ -58,35 +107,6 @@ public class MapRenderer {
         put(LevelEditorCanvas.Brush.WALL, wall);
     }};
 
-    static {
-        /*try {
-            wall = new Image(MapRenderer.class.getResource("/assets/images/wall.png").toURI().toString());
-            crateOnTile = new Image(MapRenderer.class.getResource("/assets/images/crateOnTile.png").toURI().toString());
-            crateOnDest = new Image(MapRenderer.class.getResource("/assets/images/crateOnDest.png").toURI().toString());
-            playerOnTile = new Image(MapRenderer.class.getResource("/assets/images/playerOnTile.png").toURI().toString());
-            playerOnDest = new Image(MapRenderer.class.getResource("/assets/images/playerOnDest.png").toURI().toString());
-            dest = new Image(MapRenderer.class.getResource("/assets/images/dest.png").toURI().toString());
-            tile = new Image(MapRenderer.class.getResource("/assets/images/tile.png").toURI().toString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }*/
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-            // TODO(Derppening): Refactor this later
-            wall = new Image(loader.getResource("assets/images/wall.png").toURI().toString());
-            crateOnTile = new Image(loader.getResource("assets/images/crateOnTile.png").toURI().toString());
-            crateOnDest = new Image(loader.getResource("assets/images/crateOnDest.png").toURI().toString());
-            playerOnTile = new Image(loader.getResource("assets/images/playerOnTile.png").toURI().toString());
-            playerOnDest = new Image(MapRenderer.class.getResource("assets/images/playerOnDest.png").toURI().toString());
-            dest = new Image(MapRenderer.class.getResource("assets/images/dest.png").toURI().toString());
-            tile = new Image(MapRenderer.class.getResource("assets/images/tile.png").toURI().toString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Cannot load image resources");
-        }
-    }
-
     /**
      * Render the map onto the canvas. This method can be used in Level Editor
      * <p>
@@ -95,8 +115,7 @@ public class MapRenderer {
      * @param canvas The canvas to be rendered onto
      * @param map    The map holding the current state of the game
      */
-    static void render(Canvas canvas, LevelEditorCanvas.Brush[][] map) {
-        //TODO
+    static void render(@NotNull Canvas canvas, @NotNull LevelEditorCanvas.Brush[][] map) {
         canvas.setWidth(map[0].length * LEVEL_EDITOR_TILE_SIZE);
         canvas.setHeight(map.length * LEVEL_EDITOR_TILE_SIZE);
 
@@ -119,7 +138,7 @@ public class MapRenderer {
      * @param map    The map holding the current state of the game
      */
     public static void render(Canvas canvas, Cell[][] map) {
-        //TODO
+        //TODO(Derppening): Check
         canvas.setWidth(map[0].length * LEVEL_EDITOR_TILE_SIZE);
         canvas.setHeight(map.length * LEVEL_EDITOR_TILE_SIZE);
 
@@ -138,8 +157,7 @@ public class MapRenderer {
         }
     }
 
-    // TODO(Derppening): Add @NotNull annotation
-    private static Image getTileImage(final Tile t) {
+    private static @NotNull Image getTileImage(@NotNull final Tile t) {
         Image image;
         if (t.getOccupant().orElse(null) instanceof Crate) {
             image = IMAGE_MAPPING.get(t.getClass()).tileWithCrate;

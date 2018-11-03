@@ -14,6 +14,8 @@ import viewmodel.LevelEditorCanvas;
 import viewmodel.SceneManager;
 import viewmodel.customNodes.NumberTextField;
 
+import java.util.Arrays;
+
 import static viewmodel.LevelEditorCanvas.Brush;
 
 /**
@@ -44,13 +46,23 @@ public class LevelEditorPane extends BorderPane {
      * Use 20 for VBox spacing
      */
     public LevelEditorPane() {
-        // TODO
         levelEditor = new LevelEditorCanvas(5, 5);
+        leftContainer = new VBox(20);
+        returnButton = new Button("Return");
+        rowText = new Label("Rows");
+        rowField = new NumberTextField("5");
+        colText = new Label("Columns");
+        colField = new NumberTextField("5");
+        rowBox = new BorderPane(null, null, rowField, null, rowText);
+        colBox = new BorderPane(null, null, colField, null, colText);
+        newGridButton = new Button("New Grid");
+        brushList = FXCollections.observableList(Arrays.asList(Brush.values()));
+        saveButton = new Button("Save");
+        centerContainer = new VBox();
 
-        // TODO(Derppening): Fix NPE
-        rowField.replaceSelection("5");
-        colField.replaceSelection("5");
-        brushList.addAll(Brush.values());
+        connectComponents();
+        styleComponents();
+        setCallbacks();
     }
 
     /**
@@ -60,14 +72,35 @@ public class LevelEditorPane extends BorderPane {
      * Also sets {@link LevelEditorPane#selectedBrush}'s items, and selects the first.
      */
     private void connectComponents() {
-        //TODO
+        leftContainer.getChildren().addAll(
+                returnButton,
+                rowBox,
+                colBox,
+                newGridButton,
+                selectedBrush,
+                saveButton
+        );
+        centerContainer.getChildren().addAll(
+                levelEditor
+        );
+
+        selectedBrush.setItems(brushList);
+        selectedBrush.getSelectionModel().select(0);
+
+        this.setLeft(leftContainer);
+        this.setCenter(centerContainer);
     }
 
     /**
      * Apply CSS styling to components.
      */
     private void styleComponents() {
-        //TODO
+        leftContainer.getStyleClass().add("side-menu");
+        centerContainer.getStyleClass().add("big-vbox");
+
+        for (Button b : Arrays.asList(returnButton, newGridButton, saveButton)) {
+            b.getStyleClass().add("big-button");
+        }
     }
 
     /**
@@ -82,5 +115,8 @@ public class LevelEditorPane extends BorderPane {
      */
     private void setCallbacks() {
         //TODO
+        newGridButton.setOnAction(event -> levelEditor.changeSize(rowField.getValue(), colField.getValue()));
+        returnButton.setOnAction(event -> SceneManager.getInstance().showMainMenuScene());
+        levelEditor.setOnMouseClicked(event -> levelEditor.setTile(selectedBrush.getSelectionModel().getSelectedItem(), event.getX(), event.getY()));
     }
 }
