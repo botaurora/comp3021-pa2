@@ -36,7 +36,8 @@ public class GameplayPane extends BorderPane {
      */
     public GameplayPane() {
         //TODO
-        info = new GameplayInfoPane(null, null, null, null);
+        LevelManager manager = LevelManager.getInstance();
+        info = new GameplayInfoPane(manager.currentLevelNameProperty(), manager.curGameLevelExistedDurationProperty(), manager.getGameLevel().numPushesProperty(), manager.curGameLevelNumRestartsProperty());
     }
 
     /**
