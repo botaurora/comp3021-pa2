@@ -5,10 +5,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static viewmodel.Config.LEVEL_EDITOR_TILE_SIZE;
 
@@ -116,7 +120,7 @@ public class LevelEditorCanvas extends Canvas {
 
     /**
      * Toggles the presence of player on a brush tile.
-     *
+     * <p>
      * If the tile already has a non-player occupying or the tile is a wall, has no effect.
      *
      * @param brush Original brush item.
@@ -141,7 +145,46 @@ public class LevelEditorCanvas extends Canvas {
      * the selected location.
      */
     public void saveToFile() {
-        //TODO
+        //TODO: Check
+        if (isInvalidMap()) {
+            return;
+        }
+
+        File f = getTargetSaveDirectory();
+        if (f != null) {
+            try {
+                if (!f.createNewFile()) {
+                    System.err.println("Unable to create new file!");
+                    return;
+                }
+
+                try (BufferedWriter bf  = new BufferedWriter(new PrintWriter(f))) {
+                    bf.write(Integer.valueOf(rows).toString());
+                    bf.newLine();
+                    bf.write(Integer.valueOf(cols).toString());
+                    bf.newLine();
+
+                    for (int i = 0; i < rows; ++i) {
+                        Arrays.stream(map[i]).map(Brush::getRep).forEachOrdered(it -> {
+                            try {
+                                bf.write(it);
+                            } catch (IOException e) {
+                                System.err.println("Unable to write data!");
+                                e.printStackTrace();
+
+                                if (!f.delete()) {
+                                    System.err.println("Unable to delete file!");
+                                }
+                            }
+                        });
+
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Unable to write data!");
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -152,8 +195,12 @@ public class LevelEditorCanvas extends Canvas {
      * @return The directory the user chose to save the map in.
      */
     private File getTargetSaveDirectory() {
-        //TODO
-        return null;//NOTE: You may also need to modify this line
+        //TODO: Check
+
+        FileChooser chooser = new FileChooser();
+        chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Normal text file", Collections.singletonList("*.txt")));
+
+        return chooser.showSaveDialog(null);
     }
 
     /**
@@ -169,8 +216,38 @@ public class LevelEditorCanvas extends Canvas {
      * @return If the map is invalid
      */
     private boolean isInvalidMap() {
-        //TODO
-        return true;//NOTE: You may also need to modify this line
+        String reasonText = "";
+
+        List<Brush> cells = Arrays.stream(map).flatMap(Arrays::stream).collect(Collectors.toList());
+        long numOfPlayers = cells.stream()
+                .filter(it -> it.equals(Brush.PLAYER_ON_DEST) || it.equals(Brush.PLAYER_ON_TILE))
+                .count();
+        long numOfCrates = cells.stream()
+                .filter(it -> it.equals(Brush.CRATE_ON_DEST) || it.equals(Brush.CRATE_ON_TILE))
+                .count();
+        long numOfDests = cells.stream()
+                .filter(it -> it.equals(Brush.DEST) || it.equals(Brush.CRATE_ON_DEST) || it.equals(Brush.PLAYER_ON_DEST))
+                .count();
+
+        if (numOfCrates < 1 || numOfDests < 1) {
+            reasonText = "Please create at least 1 crate and destination.";
+        } else if (numOfCrates != numOfDests) {
+            reasonText = "Imbalanced number of crates and destinations";
+        } else if (numOfPlayers != 1) {
+            reasonText = "Please add a player.";
+        } else if (rows < 3 || cols < 3) {
+            reasonText = "Minimum size is 3 rows and 3 cols";
+        }
+
+        if (!reasonText.isEmpty()) {
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Error");
+            a.setHeaderText("Could not save map!");
+            a.setContentText(reasonText);
+            a.show();
+        }
+
+        return !reasonText.isEmpty();
     }
 
     /**
