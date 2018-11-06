@@ -1,8 +1,11 @@
 package viewmodel;
 
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,17 +49,31 @@ public class AudioManager {
      */
     private void playFile(String name) {
         //TODO(Derppening): Check
-        MediaPlayer player = new MediaPlayer(new Media(name + ".mp3"));
+        final URL audioUrl = Thread.currentThread().getContextClassLoader().getResource("assets/audio/" + name +".mp3");
+        assert audioUrl != null;
 
-        player.onEndOfMediaProperty().setValue(() -> {
-            soundPool.remove(player);
-            Thread t = new Thread(player::dispose);
-            t.setDaemon(true);
-            t.start();
-        });
+        try {
+            Media m = new Media(audioUrl.toURI().toString());
 
-        soundPool.add(player);
-        player.play();
+            try {
+                MediaPlayer player = new MediaPlayer(m);
+
+                player.onEndOfMediaProperty().setValue(() -> {
+                    soundPool.remove(player);
+                    Thread t = new Thread(player::dispose);
+                    t.setDaemon(true);
+                    t.start();
+                });
+
+                soundPool.add(player);
+                player.play();
+            } catch (MediaException e) {
+                // not handled
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Cannot load " + name + ".mp3");
+        }
     }
 
     public void playMoveSound() {

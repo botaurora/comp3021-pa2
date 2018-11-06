@@ -92,23 +92,21 @@ public class LevelManager {
      * @throws InvalidMapException if the map was invalid
      */
     public void setLevel(String levelName) throws InvalidMapException {
-        // TODO(Derppening): Check
-
-        // Reset everything
         resetLevelTimer();
-        resetNumRestarts();
 
-        if (levelName == null) {
-            // what will i do? :(
-            throw new NullPointerException("levelName is null");
+        if (levelName == null || levelName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid levelname: " + levelName);
         }
 
         try {
+            // TODO(Derppening): Ask TA about FileNotFoundException
             gameLevel.loadMap(Paths.get(mapDirectory, levelName).normalize().toAbsolutePath().toString());
         } catch (InvalidMapException e) {
             e.printStackTrace();
             throw e;
         }
+
+        this.curLevelNameProperty.setValue(levelName);
     }
 
     /**
@@ -118,14 +116,12 @@ public class LevelManager {
      * {@link javafx.application.Platform#runLater(Runnable)} are required
      */
     public void startLevelTimer() {
-        // TODO(Derppening): Check
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                curGameLevelExistedDuration.add(1);
+                Platform.runLater(() -> curGameLevelExistedDuration.set(curGameLevelExistedDuration.getValue() + 1));
             }
         }, 0, 1000);
-        Platform.runLater(this::startLevelTimer);
     }
 
     /**
@@ -140,7 +136,7 @@ public class LevelManager {
      * Increment the number of restarts the user has performed on the current GameLevel
      */
     public void incrementNumRestarts() {
-        curGameLevelNumRestarts.set(curGameLevelNumRestarts.get() + 1);
+        curGameLevelNumRestarts.set(curGameLevelNumRestarts.getValue() + 1);
     }
 
     /**
@@ -156,9 +152,7 @@ public class LevelManager {
      * name is always valid.
      */
     public String getNextLevelName() {
-        // TODO(Derppening): Check
-
-        int i = levelNames.indexOf(curLevelNameProperty.toString());
+        int i = levelNames.indexOf(curLevelNameProperty.getValue());
         if (i == -1) {
             throw new IllegalStateException("Current Level Name is not in Level Names list!");
         }

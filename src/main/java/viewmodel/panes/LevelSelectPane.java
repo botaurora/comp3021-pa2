@@ -96,8 +96,16 @@ public class LevelSelectPane extends BorderPane {
         returnButton.setOnAction(event -> SceneManager.getInstance().showMainMenuScene());
         chooseMapDirButton.setOnAction(event -> promptUserForMapDirectory());
         playButton.setOnAction(event -> {
-            System.out.println(this.getClass().getSimpleName() + ": STUB");
-            // TODO(Derppening): STUB
+            LevelManager manager = LevelManager.getInstance();
+
+            try {
+                manager.setLevel(manager.currentLevelNameProperty().getValue());
+                SceneManager.getInstance().showGamePlayScene();
+                manager.startLevelTimer();
+            } catch (InvalidMapException e) {
+                // TODO(Derppening): Gracefully fail!
+                throw new IllegalStateException("Cannot find destination map to load!");
+            }
         });
         levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             try {
@@ -106,6 +114,7 @@ public class LevelSelectPane extends BorderPane {
 
                 playButton.setDisable(false);
             } catch (InvalidMapException e) {
+                // TODO(Derppening): Gracefully fail!
                 System.err.println("Invalid map selected!");
                 e.printStackTrace();
             }

@@ -138,7 +138,6 @@ public class MapRenderer {
      * @param map    The map holding the current state of the game
      */
     public static void render(Canvas canvas, Cell[][] map) {
-        //TODO(Derppening): Check
         canvas.setWidth(map[0].length * LEVEL_EDITOR_TILE_SIZE);
         canvas.setHeight(map.length * LEVEL_EDITOR_TILE_SIZE);
 
