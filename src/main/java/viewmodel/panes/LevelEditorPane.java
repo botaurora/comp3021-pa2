@@ -58,7 +58,7 @@ public class LevelEditorPane extends BorderPane {
         newGridButton = new Button("New Grid");
         brushList = FXCollections.observableList(Arrays.asList(Brush.values()));
         saveButton = new Button("Save");
-        centerContainer = new VBox();
+        centerContainer = new VBox(20);
 
         connectComponents();
         styleComponents();
