@@ -14,6 +14,7 @@ import viewmodel.MapRenderer;
 import viewmodel.SceneManager;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Represents the main menu in the game
@@ -32,7 +33,19 @@ public class LevelSelectPane extends BorderPane {
      * Use 20 for VBox spacing
      */
     public LevelSelectPane() {
-        //TODO
+        leftContainer = new VBox(20);
+        returnButton = new Button("Return");
+        playButton = new Button("Play");
+        chooseMapDirButton = new Button("Choose map directory");
+        levelsListView = new ListView<>();
+        centerContainer = new VBox(20);
+        levelPreview = new Canvas();
+
+        playButton.setDisable(true);
+
+        connectComponents();
+        styleComponents();
+        setCallbacks();
     }
 
     /**
@@ -40,14 +53,32 @@ public class LevelSelectPane extends BorderPane {
      * the other classes in the {@link javafx.scene.layout.Pane} package.
      */
     private void connectComponents() {
-        //TODO
+        leftContainer.getChildren().addAll(
+                returnButton,
+                chooseMapDirButton,
+                levelsListView,
+                playButton
+        );
+        centerContainer.getChildren().addAll(
+                levelPreview
+        );
+
+        levelsListView.setItems(LevelManager.getInstance().getLevelNames());
+
+        this.setLeft(leftContainer);
+        this.setCenter(centerContainer);
     }
 
     /**
      * Apply CSS styling to components. Also sets the {@link LevelSelectPane#playButton} to be disabled.
      */
     private void styleComponents() {
-        //TODO
+        leftContainer.getStyleClass().add("side-menu");
+        centerContainer.getStyleClass().add("big-vbox");
+
+        for (Button b : Arrays.asList(returnButton, chooseMapDirButton, playButton)) {
+            b.getStyleClass().add("big-button");
+        }
     }
 
     /**
@@ -62,7 +93,23 @@ public class LevelSelectPane extends BorderPane {
      * preview (see {@link MapRenderer#render(Canvas, Cell[][])}}, and set the play button to enabled.
      */
     private void setCallbacks() {
-        //TODO
+        returnButton.setOnAction(event -> SceneManager.getInstance().showMainMenuScene());
+        chooseMapDirButton.setOnAction(event -> promptUserForMapDirectory());
+        playButton.setOnAction(event -> {
+            System.out.println(this.getClass().getSimpleName() + ": STUB");
+            // TODO(Derppening): STUB
+        });
+        levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                LevelManager.getInstance().setLevel(newValue);
+                MapRenderer.render(levelPreview, LevelManager.getInstance().getGameLevel().getMap().getCells());
+
+                playButton.setDisable(false);
+            } catch (InvalidMapException e) {
+                System.err.println("Invalid map selected!");
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -71,6 +118,14 @@ public class LevelSelectPane extends BorderPane {
      * load the levels from disk using LevelManager (if the user didn't cancel out the window)
      */
     private void promptUserForMapDirectory() {
-        //TODO
+        DirectoryChooser chooser = new DirectoryChooser();
+        File folder = chooser.showDialog(null);
+
+        if (folder != null) {
+            LevelManager.getInstance().setMapDirectory(folder.getAbsolutePath());
+            LevelManager.getInstance().loadLevelNamesFromDisk();
+
+            levelsListView.getSelectionModel().clearSelection();
+        }
     }
 }

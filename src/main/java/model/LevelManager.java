@@ -58,7 +58,14 @@ public class LevelManager {
     public void loadLevelNamesFromDisk() {
         // TODO(Derppening): Check
         try (Stream<Path> stream = Files.walk(Paths.get(mapDirectory), 1)) {
-            List<String> files = stream.filter(f -> f.toFile().isFile()).map(Path::toString).collect(Collectors.toList());
+            List<String> files = stream
+                    .filter(f -> f.toFile().isFile())
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .filter(it -> it.endsWith(".txt"))
+                    .sorted(String::compareTo)
+                    .collect(Collectors.toList());
+
             levelNames.addAll(files);
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +104,7 @@ public class LevelManager {
         }
 
         try {
-            gameLevel.loadMap(levelName);
+            gameLevel.loadMap(Paths.get(mapDirectory, levelName).normalize().toAbsolutePath().toString());
         } catch (InvalidMapException e) {
             e.printStackTrace();
             throw e;
