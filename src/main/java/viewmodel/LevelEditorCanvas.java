@@ -101,10 +101,10 @@ public class LevelEditorCanvas extends Canvas {
 
         if (brush.equals(Brush.PLAYER_ON_DEST) || brush.equals(Brush.PLAYER_ON_TILE)) {
             if (oldPlayerCol != -1 || oldPlayerRow != -1) {
-                map[oldPlayerRow][oldPlayerCol] = togglePlayerOnTile(brush);
+                map[oldPlayerRow][oldPlayerCol] = togglePlayerOnTile(map[oldPlayerRow][oldPlayerCol]);
             }
 
-            map[mappedR][mappedC] = togglePlayerOnTile(brush);
+            map[mappedR][mappedC] = togglePlayerOnTile(map[mappedR][mappedC]);
             oldPlayerRow = mappedR;
             oldPlayerCol = mappedC;
         } else {

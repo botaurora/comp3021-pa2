@@ -114,7 +114,7 @@ public class LevelEditorPane extends BorderPane {
      * passing in the currently selected brush and mouse click coordinates
      */
     private void setCallbacks() {
-        //TODO
+        saveButton.setOnAction(event -> levelEditor.saveToFile());
         newGridButton.setOnAction(event -> levelEditor.changeSize(rowField.getValue(), colField.getValue()));
         returnButton.setOnAction(event -> SceneManager.getInstance().showMainMenuScene());
         levelEditor.setOnMouseClicked(event -> levelEditor.setTile(selectedBrush.getSelectionModel().getSelectedItem(), event.getX(), event.getY()));
