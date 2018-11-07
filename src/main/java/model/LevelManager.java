@@ -56,7 +56,6 @@ public class LevelManager {
      * Hints: Files.walk(Paths.get(mapDirectory), 1) returns a Stream of files 1 folder deep
      */
     public void loadLevelNamesFromDisk() {
-        // TODO(Derppening): Check
         try (Stream<Path> stream = Files.walk(Paths.get(mapDirectory), 1)) {
             List<String> files = stream
                     .filter(f -> f.toFile().isFile())

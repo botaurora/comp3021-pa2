@@ -48,7 +48,6 @@ public class AudioManager {
      * @param name the name of the sound file to be played, excluding .mp3
      */
     private void playFile(String name) {
-        //TODO(Derppening): Check
         final URL audioUrl = Thread.currentThread().getContextClassLoader().getResource("assets/audio/" + name +".mp3");
         assert audioUrl != null;
 
