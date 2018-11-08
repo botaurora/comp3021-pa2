@@ -137,7 +137,7 @@ public class MapRenderer {
      * @param canvas The canvas to be rendered onto
      * @param map    The map holding the current state of the game
      */
-    public static void render(Canvas canvas, Cell[][] map) {
+    public static void render(@NotNull Canvas canvas, @NotNull Cell[][] map) {
         canvas.setWidth(map[0].length * LEVEL_EDITOR_TILE_SIZE);
         canvas.setHeight(map.length * LEVEL_EDITOR_TILE_SIZE);
 
@@ -156,6 +156,12 @@ public class MapRenderer {
         }
     }
 
+    /**
+     * Returns the image for a given tile.
+     *
+     * @param t Tile to display.
+     * @return Image of the tile.
+     */
     private static @NotNull Image getTileImage(@NotNull final Tile t) {
         Image image;
         if (t.getOccupant().orElse(null) instanceof Crate) {
