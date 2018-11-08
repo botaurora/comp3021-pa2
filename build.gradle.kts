@@ -1,9 +1,12 @@
+import java.io.File
+
 repositories {
     mavenCentral()
 }
 
 plugins {
     application
+    java
     id("com.google.osdetector") version "1.6.0"
     id("org.jetbrains.intellij") version "0.3.12"
 }
@@ -31,6 +34,10 @@ val platform: String = when (osdetector.os) {
 val javaHome = System.getenv()["JAVA_HOME"] ?: ""
 
 dependencies {
+    val junit = "5.3.1"
+    val junitPlatform = "1.3.1"
+    val testfx = "4.0.15-alpha"
+
     // TODO(Derppening): Uncomment these when testing with Java 10
 //    compile("org.openjfx:javafx-base:11:$platform")
 //    compile("org.openjfx:javafx-controls:11:$platform")
@@ -38,6 +45,22 @@ dependencies {
 //    compile("org.openjfx:javafx-media:11:$platform")
 
     compile("org.jetbrains:annotations:16.0.3")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:$junit")
+    testCompile("org.junit.jupiter:junit-jupiter-params:$junit")
+    testCompile("org.junit.platform:junit-platform-runner:$junitPlatform")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junit")
+    testRuntime("org.junit.platform:junit-platform-console:$junitPlatform")
+    testCompile("org.testfx:testfx-core:$testfx")
+    testCompile("org.testfx:testfx-junit5:$testfx")
+}
+
+sourceSets {
+    getByName("test") {
+        resources {
+            srcDirs.add(File("src/main/resources"))
+        }
+    }
 }
 
 tasks {
@@ -55,6 +78,10 @@ tasks {
 //        jvmArgs?.addAll(listOf(
 //                "--module-path", classpath.asPath,
 //                "--add-modules", "javafx.controls,javafx.graphics,javafx.media"))
+    }
+
+    getByName<Test>("test") {
+        useJUnitPlatform()
     }
 
     getByName<Wrapper>("wrapper") {
