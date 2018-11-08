@@ -66,7 +66,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // click on level editor button
         {
-            System.out.println("Initialization Stage");
+            System.out.println("\tPhase 0: Initialization");
 
             Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
 
@@ -123,7 +123,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // a.
         {
-            System.out.println("Stage A: Select brushes and draw element on canvas");
+            System.out.println("\tPhase A: Select brushes and draw element on canvas");
 
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
@@ -149,7 +149,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // b.
         {
-            System.out.println("Stage B: Move Player-on-Destination to Player-on-Tile");
+            System.out.println("\tPhase B: Move Player-on-Destination to Player-on-Tile");
 
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
@@ -176,7 +176,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // c.
         {
-            System.out.println("Stage C: Move Player-on-Tile");
+            System.out.println("\tPhase C: Move Player-on-Tile");
 
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
@@ -201,7 +201,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // d.
         {
-            System.out.println("Stage D: Place Player-on-Tile to Top-Left");
+            System.out.println("\tPhase D: Place Player-on-Tile to Top-Left");
 
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
@@ -211,7 +211,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // e.
         {
-            System.out.println("Stage E: Resize Map");
+            System.out.println("\tPhase E: Resize Map");
 
             final NumberTextField rowField = ((NumberTextField) ((BorderPane) rowBoxNode).getRight());
             final NumberTextField colField = ((NumberTextField) ((BorderPane) colBoxNode).getRight());
@@ -241,7 +241,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // f.
         {
-            System.out.println("Stage F: Crate-on-Tile and Player-on-Tile Coexistence");
+            System.out.println("\tPhase F: Crate-on-Tile and Player-on-Tile Coexistence");
 
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
@@ -268,7 +268,7 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // g.
         {
-            System.out.println("Stage G: Save Map with Unsatisfied Preconditions");
+            System.out.println("\tPhase G: Save Map with Unsatisfied Preconditions");
 
             final NumberTextField rowField = ((NumberTextField) ((BorderPane) rowBoxNode).getRight());
             final NumberTextField colField = ((NumberTextField) ((BorderPane) colBoxNode).getRight());
