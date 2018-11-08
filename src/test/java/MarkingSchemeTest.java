@@ -10,7 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -32,6 +34,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 public class MarkingSchemeTest extends ApplicationTest {
+    @BeforeAll
+    static void setup() {
+        System.out.println();
+    }
+
     @Override
     @Start
     public void start(Stage stage) {
@@ -54,8 +61,13 @@ public class MarkingSchemeTest extends ApplicationTest {
 
     @Test
     void testCreatingNewMaps() {
+        System.out.println("Running MarkingSchemeTest::testCreatingNewMaps()");
+        System.out.println("\tCreating new maps: From the level editor pane");
+
         // click on level editor button
         {
+            System.out.println("Initialization Stage");
+
             Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
 
             final Node targetVBox = currentRoot.getChildrenUnmodifiable().stream()
@@ -111,6 +123,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // a.
         {
+            System.out.println("Stage A: Select brushes and draw element on canvas");
+
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
@@ -135,6 +149,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // b.
         {
+            System.out.println("Stage B: Move Player-on-Destination to Player-on-Tile");
+
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
@@ -160,6 +176,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // c.
         {
+            System.out.println("Stage C: Move Player-on-Tile");
+
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
@@ -183,6 +201,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // d.
         {
+            System.out.println("Stage D: Place Player-on-Tile to Top-Left");
+
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
             listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
@@ -191,6 +211,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // e.
         {
+            System.out.println("Stage E: Resize Map");
+
             final NumberTextField rowField = ((NumberTextField) ((BorderPane) rowBoxNode).getRight());
             final NumberTextField colField = ((NumberTextField) ((BorderPane) colBoxNode).getRight());
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
@@ -219,6 +241,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // f.
         {
+            System.out.println("Stage F: Crate-on-Tile and Player-on-Tile Coexistence");
+
             final LevelEditorCanvas canvas = (LevelEditorCanvas) canvasNode;
 
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
@@ -244,6 +268,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
         // g.
         {
+            System.out.println("Stage G: Save Map with Unsatisfied Preconditions");
+
             final NumberTextField rowField = ((NumberTextField) ((BorderPane) rowBoxNode).getRight());
             final NumberTextField colField = ((NumberTextField) ((BorderPane) colBoxNode).getRight());
             @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
@@ -310,5 +336,8 @@ public class MarkingSchemeTest extends ApplicationTest {
 
             type(KeyCode.ENTER);
         }
+
+        System.out.println("Completed MarkingSchemeTest::testCreatingNewMaps()");
+        System.out.println();
     }
 }
