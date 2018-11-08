@@ -63,6 +63,7 @@ public class MarkingSchemeTest extends ApplicationTest {
     void testCreatingNewMaps() {
         System.out.println("Running MarkingSchemeTest::testCreatingNewMaps()");
         System.out.println("\tCreating new maps: From the level editor pane");
+        System.out.println();
 
         // click on level editor button
         {
