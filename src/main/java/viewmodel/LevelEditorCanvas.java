@@ -108,12 +108,11 @@ public class LevelEditorCanvas extends Canvas {
                 map[oldPlayerRow][oldPlayerCol] = togglePlayerOnTile(map[oldPlayerRow][oldPlayerCol]);
             }
 
-            map[mappedR][mappedC] = togglePlayerOnTile(map[mappedR][mappedC]);
             oldPlayerRow = mappedR;
             oldPlayerCol = mappedC;
-        } else {
-            map[mappedR][mappedC] = brush;
         }
+
+        map[mappedR][mappedC] = brush;
 
         renderCanvas();
     }
