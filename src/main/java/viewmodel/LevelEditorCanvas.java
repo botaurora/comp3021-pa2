@@ -65,6 +65,9 @@ public class LevelEditorCanvas extends Canvas {
         this.rows = rows;
         this.cols = cols;
 
+        this.oldPlayerRow = -1;
+        this.oldPlayerCol = -1;
+
         map = new Brush[rows][cols];
         for (Brush[] brushes : map) {
             Arrays.fill(brushes, Brush.TILE);
@@ -104,7 +107,7 @@ public class LevelEditorCanvas extends Canvas {
         int mappedC = (int) Math.floor(x) / LEVEL_EDITOR_TILE_SIZE;
 
         if (brush.equals(Brush.PLAYER_ON_DEST) || brush.equals(Brush.PLAYER_ON_TILE)) {
-            if (oldPlayerCol != -1 || oldPlayerRow != -1) {
+            if (oldPlayerCol != -1 && oldPlayerRow != -1) {
                 map[oldPlayerRow][oldPlayerCol] = togglePlayerOnTile(map[oldPlayerRow][oldPlayerCol]);
             }
 
