@@ -49,10 +49,10 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:$junit")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junit")
     testCompile("org.junit.platform:junit-platform-runner:$junitPlatform")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junit")
-    testRuntime("org.junit.platform:junit-platform-console:$junitPlatform")
     testCompile("org.testfx:testfx-core:$testfx")
     testCompile("org.testfx:testfx-junit5:$testfx")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junit")
+    testRuntime("org.junit.platform:junit-platform-console:$junitPlatform")
 }
 
 sourceSets {
