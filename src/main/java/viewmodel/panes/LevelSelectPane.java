@@ -14,6 +14,9 @@ import viewmodel.MapRenderer;
 import viewmodel.SceneManager;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 /**
@@ -37,7 +40,7 @@ public class LevelSelectPane extends BorderPane {
         returnButton = new Button("Return");
         playButton = new Button("Play");
         chooseMapDirButton = new Button("Choose map directory");
-        levelsListView = new ListView<>();
+        levelsListView = new ListView<>(LevelManager.getInstance().getLevelNames());
         centerContainer = new VBox(20);
         levelPreview = new Canvas();
 
@@ -46,6 +49,19 @@ public class LevelSelectPane extends BorderPane {
         connectComponents();
         styleComponents();
         setCallbacks();
+
+        // TODO(Derppening): Write this in report
+        try {
+            Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
+            Path actualPath = testPath.getParent().toAbsolutePath();
+
+            LevelManager.getInstance().setMapDirectory(actualPath.toString());
+            LevelManager.getInstance().loadLevelNamesFromDisk();
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("Cannot find bundled maps");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -62,8 +78,6 @@ public class LevelSelectPane extends BorderPane {
         centerContainer.getChildren().addAll(
                 levelPreview
         );
-
-        levelsListView.setItems(LevelManager.getInstance().getLevelNames());
 
         this.setLeft(leftContainer);
         this.setCenter(centerContainer);
