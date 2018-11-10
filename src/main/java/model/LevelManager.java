@@ -65,6 +65,7 @@ public class LevelManager {
                     .sorted(String::compareTo)
                     .collect(Collectors.toList());
 
+            levelNames.clear();
             levelNames.addAll(files);
         } catch (IOException e) {
             e.printStackTrace();
