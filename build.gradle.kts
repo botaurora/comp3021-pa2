@@ -12,7 +12,7 @@ plugins {
 }
 
 application {
-    mainClassName = "SokobanApplication"
+    mainClassName = "main.SokobanApplication"
 }
 
 java {
