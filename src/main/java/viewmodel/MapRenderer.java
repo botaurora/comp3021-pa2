@@ -33,17 +33,6 @@ public class MapRenderer {
     private static Image tile = null;
 
     static {
-        /*try {
-            wall = new Image(MapRenderer.class.getResource("/assets/images/wall.png").toURI().toString());
-            crateOnTile = new Image(MapRenderer.class.getResource("/assets/images/crateOnTile.png").toURI().toString());
-            crateOnDest = new Image(MapRenderer.class.getResource("/assets/images/crateOnDest.png").toURI().toString());
-            playerOnTile = new Image(MapRenderer.class.getResource("/assets/images/playerOnTile.png").toURI().toString());
-            playerOnDest = new Image(MapRenderer.class.getResource("/assets/images/playerOnDest.png").toURI().toString());
-            dest = new Image(MapRenderer.class.getResource("/assets/images/dest.png").toURI().toString());
-            tile = new Image(MapRenderer.class.getResource("/assets/images/tile.png").toURI().toString());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }*/
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
