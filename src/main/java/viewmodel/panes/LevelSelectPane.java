@@ -122,6 +122,12 @@ public class LevelSelectPane extends BorderPane {
             }
         });
         levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                levelPreview.setWidth(0);
+                levelPreview.setHeight(0);
+                return;
+            }
+
             try {
                 LevelManager.getInstance().setLevel(newValue);
                 MapRenderer.render(levelPreview, LevelManager.getInstance().getGameLevel().getMap().getCells());
