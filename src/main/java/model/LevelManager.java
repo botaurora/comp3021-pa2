@@ -92,6 +92,7 @@ public class LevelManager {
      * @throws InvalidMapException if the map was invalid
      */
     public void setLevel(String levelName) throws InvalidMapException {
+        gameLevel.numPushesProperty().set(0);
         resetLevelTimer();
 
         if (levelName == null || levelName.isEmpty()) {

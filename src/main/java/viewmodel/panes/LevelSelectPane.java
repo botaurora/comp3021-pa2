@@ -114,7 +114,11 @@ public class LevelSelectPane extends BorderPane {
 
             try {
                 manager.setLevel(manager.currentLevelNameProperty().getValue());
+                manager.resetNumRestarts();
+                manager.resetLevelTimer();
+
                 SceneManager.getInstance().showGamePlayScene();
+
                 manager.startLevelTimer();
             } catch (InvalidMapException e) {
                 // TODO(Derppening): Gracefully fail!
