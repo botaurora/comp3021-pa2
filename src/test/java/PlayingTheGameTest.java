@@ -167,7 +167,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         try {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
-            Path actualPath = testPath.getParent().getParent().toAbsolutePath();
+            Path actualPath = testPath.getParent().toAbsolutePath();
 
             LevelManager.getInstance().setMapDirectory(actualPath.toString());
             Platform.runLater(() -> LevelManager.getInstance().loadLevelNamesFromDisk());
@@ -212,6 +212,16 @@ public class PlayingTheGameTest extends ApplicationTest {
      * loading.
      */
     void loadDefaultMapDirectory() {
+        try {
+            Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
+            Path actualPath = testPath.getParent().getParent().toAbsolutePath();
+
+            LevelManager.getInstance().setMapDirectory(actualPath.toString());
+            Platform.runLater(() -> LevelManager.getInstance().loadLevelNamesFromDisk());
+        } catch (URISyntaxException e) {
+            fail();
+        }
+
         Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(currentRoot instanceof LevelSelectPane);
 
@@ -232,6 +242,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         clickOn(chooseDirNode);
         type(KeyCode.BACK_SPACE);
 
+        // TODO(Derppening): Find Platform-independent way to test this
         type(
                 KeyCode.B,
                 KeyCode.RIGHT,
@@ -311,8 +322,6 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .filter(it -> it instanceof Button && ((Button) it).getText().equals("Play"))
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
-
-        loadDefaultMapDirectory();
 
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
@@ -416,8 +425,6 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
-        loadDefaultMapDirectory();
-
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
 
@@ -505,8 +512,6 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
-        loadDefaultMapDirectory();
-
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
 
@@ -582,8 +587,6 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
-        loadDefaultMapDirectory();
-
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
 
@@ -649,8 +652,6 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .filter(it -> it instanceof Button && ((Button) it).getText().equals("Play"))
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
-
-        loadDefaultMapDirectory();
 
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
