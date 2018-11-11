@@ -130,6 +130,8 @@ public class LevelManager {
     public void resetLevelTimer() {
         t.cancel();
         t = new Timer(true);
+
+        curGameLevelExistedDuration.set(0);
     }
 
     /**
