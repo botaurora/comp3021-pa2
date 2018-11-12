@@ -126,6 +126,7 @@ public class GameplayPane extends BorderPane {
                     audio.playWinSound();
                 }
 
+                // TODO(Derppening): Check with JAR
                 lvl.resetLevelTimer();
                 createLevelClearPopup();
             } else if (lvl.getGameLevel().isDeadlocked()) {
@@ -133,6 +134,7 @@ public class GameplayPane extends BorderPane {
                     audio.playDeadlockSound();
                 }
 
+                // TODO(Derppening): Check with JAR
                 lvl.resetLevelTimer();
                 createDeadlockedPopup();
             }

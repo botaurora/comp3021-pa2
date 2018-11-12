@@ -155,10 +155,21 @@ public class LevelSelectPane extends BorderPane {
         File folder = chooser.showDialog(null);
 
         if (folder != null) {
-            LevelManager.getInstance().setMapDirectory(folder.getAbsolutePath());
-            LevelManager.getInstance().loadLevelNamesFromDisk();
-
-            levelsListView.getSelectionModel().clearSelection();
+            commitMapDirectoryChange(folder);
         }
+    }
+
+    /**
+     * Helper function to commit the directory change to {@link LevelManager}.
+     *
+     * Used as a convenience function for test cases to switch between directories.
+     *
+     * @param dir Directory where map files should be loaded from.
+     */
+    private void commitMapDirectoryChange(File dir) {
+        levelsListView.getSelectionModel().clearSelection();
+
+        LevelManager.getInstance().setMapDirectory(dir.getAbsolutePath());
+        LevelManager.getInstance().loadLevelNamesFromDisk();
     }
 }
