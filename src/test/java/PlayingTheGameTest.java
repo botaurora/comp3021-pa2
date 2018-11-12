@@ -2,7 +2,9 @@ import com.sun.javafx.fxml.PropertyNotFoundException;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -17,7 +19,6 @@ import model.Map.Occupant.Player;
 import model.Map.Occupiable.Occupiable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.Start;
@@ -28,8 +29,11 @@ import viewmodel.panes.GameplayPane;
 import viewmodel.panes.LevelSelectPane;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -169,9 +173,23 @@ public class PlayingTheGameTest extends ApplicationTest {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().toAbsolutePath();
 
-            LevelManager.getInstance().setMapDirectory(actualPath.toString());
-            Platform.runLater(() -> LevelManager.getInstance().loadLevelNamesFromDisk());
-        } catch (URISyntaxException e) {
+            Class<?> clazz = LevelSelectPane.class;
+            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            m.setAccessible(true);
+
+            Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
+            assertTrue(currentRoot instanceof LevelSelectPane);
+
+            Platform.runLater(() -> {
+                try {
+                    m.invoke(currentRoot, actualPath.toFile());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    fail();
+                }
+            });
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        } catch (URISyntaxException | NoSuchMethodException e) {
             fail();
         }
     }
@@ -188,7 +206,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         Platform.runLater(() -> SceneManager.getInstance().setStage(stage));
         Platform.runLater(() -> SceneManager.getInstance().showLevelSelectMenuScene());
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -212,16 +230,6 @@ public class PlayingTheGameTest extends ApplicationTest {
      * loading.
      */
     void loadDefaultMapDirectory() {
-        try {
-            Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
-            Path actualPath = testPath.getParent().getParent().toAbsolutePath();
-
-            LevelManager.getInstance().setMapDirectory(actualPath.toString());
-            Platform.runLater(() -> LevelManager.getInstance().loadLevelNamesFromDisk());
-        } catch (URISyntaxException e) {
-            fail();
-        }
-
         Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(currentRoot instanceof LevelSelectPane);
 
@@ -230,34 +238,54 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
-        Node chooseDirNode = ((VBox) leftVBoxNode).getChildrenUnmodifiable().stream()
-                .filter(it -> it instanceof Button && ((Button) it).getText().equals("Choose map directory"))
-                .findFirst()
-                .orElseThrow(PropertyNotFoundException::new);
         Node levelsListViewNode = ((VBox) leftVBoxNode).getChildrenUnmodifiable().stream()
                 .filter(it -> it instanceof ListView)
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
-        clickOn(chooseDirNode);
-        type(KeyCode.BACK_SPACE);
+        try {
+            Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
+            Path actualPath = testPath.getParent().getParent().toAbsolutePath();
 
-        // TODO(Derppening): Find Platform-independent way to test this
-        type(
-                KeyCode.B,
-                KeyCode.RIGHT,
-                KeyCode.R,
-                KeyCode.E,
-                KeyCode.S,
-                KeyCode.RIGHT,
-                KeyCode.RIGHT,
-                KeyCode.RIGHT,
-                KeyCode.M,
-                KeyCode.RIGHT,
-                KeyCode.ENTER
-        );
+            Class<?> clazz = LevelSelectPane.class;
+            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            m.setAccessible(true);
 
-        assertEquals(14, ((ListView<?>) levelsListViewNode).getItems().size());
+            Platform.runLater(() -> {
+                try {
+                    m.invoke(currentRoot, actualPath.toFile());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    fail();
+                }
+            });
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            assertEquals(0, ((ListView<?>) levelsListViewNode).getItems().size());
+        } catch (URISyntaxException | NoSuchMethodException e) {
+            fail();
+        }
+
+        try {
+            Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
+            Path actualPath = testPath.getParent().toAbsolutePath();
+
+            Class<?> clazz = LevelSelectPane.class;
+            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            m.setAccessible(true);
+
+            Platform.runLater(() -> {
+                try {
+                    m.invoke(currentRoot, actualPath.toFile());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    fail();
+                }
+            });
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            assertEquals(14, ((ListView<?>) levelsListViewNode).getItems().size());
+        } catch (URISyntaxException | NoSuchMethodException e) {
+            fail();
+        }
     }
 
     /**
@@ -284,7 +312,12 @@ public class PlayingTheGameTest extends ApplicationTest {
         System.setErr(new PrintStream(stderrContent));
 
         clickOn(chooseDirNode);
+
+        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+
         type(KeyCode.ESCAPE);
+
+        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
 
         assertTrue(stderrContent.toString().isEmpty());
     }
@@ -328,7 +361,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         clickOn(playNode);
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -430,7 +463,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         clickOn(playNode);
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -467,6 +500,8 @@ public class PlayingTheGameTest extends ApplicationTest {
             String timerFieldValue = ((Label) timerField.get(infoPane)).getText();
 
             clickOn(restartNode);
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
@@ -517,7 +552,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         clickOn(playNode);
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -545,8 +580,12 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             type(DEADLOCK_MOVES);
 
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
             type(KeyCode.SPACE);
 
@@ -557,10 +596,14 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             type(DEADLOCK_MOVES);
 
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
             type(KeyCode.RIGHT, KeyCode.SPACE);
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
             assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -592,7 +635,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         clickOn(playNode);
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -608,10 +651,13 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         type(WIN_MOVES);
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         type(KeyCode.SPACE);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Class<?> clazz = GameplayInfoPane.class;
         try {
@@ -658,18 +704,23 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         clickOn(playNode);
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
         type(WIN_MOVES);
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         // TODO(Derppening): Ask TA about discrepancy for Marking Scheme vs JAR
         type(KeyCode.RIGHT, KeyCode.SPACE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
     }
 }
