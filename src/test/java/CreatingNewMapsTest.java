@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * TODO(Derppening): Ask if the tests are well sequenced.
- *
  * Test cases for all conditions as specified by Compulsory Demo Tasks, Creating New Maps section.
  */
 public class CreatingNewMapsTest extends ApplicationTest {
@@ -45,6 +43,9 @@ public class CreatingNewMapsTest extends ApplicationTest {
     private Node saveNode;
     private Node canvasNode;
 
+    /**
+     * Assigns the member fields to the appropriate nodes.
+     */
     @BeforeEach
     void setupEach() {
         Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -87,13 +88,18 @@ public class CreatingNewMapsTest extends ApplicationTest {
         setBoardSize(null, null);
     }
 
+    /**
+     * Displays the Level Editor scene.
+     *
+     * @param stage Primary Stage.
+     */
     @Override
     @Start
     public void start(Stage stage) {
         Platform.runLater(() -> SceneManager.getInstance().setStage(stage));
         Platform.runLater(() -> SceneManager.getInstance().showLevelEditorScene());
 
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -127,7 +133,11 @@ public class CreatingNewMapsTest extends ApplicationTest {
             colField.replaceSelection(cols.toString());
         }
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(newGridNode);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -147,7 +157,12 @@ public class CreatingNewMapsTest extends ApplicationTest {
             final LevelEditorCanvas.Brush brush = listView.getItems().get(i);
 
             listView.getSelectionModel().clearAndSelect(i);
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
             clickOn(offset(canvasNode, -64.0, -64.0));
+
+            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
             Class<?> clazz = LevelEditorCanvas.class;
             try {
@@ -182,10 +197,20 @@ public class CreatingNewMapsTest extends ApplicationTest {
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_DEST);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -64.0, -64.0));
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, 64.0, 64.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Class<?> clazz = LevelEditorCanvas.class;
         try {
@@ -220,8 +245,13 @@ public class CreatingNewMapsTest extends ApplicationTest {
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -64.0, -64.0));
         clickOn(offset(canvasNode, 64.0, 64.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Class<?> clazz = LevelEditorCanvas.class;
         try {
@@ -247,7 +277,12 @@ public class CreatingNewMapsTest extends ApplicationTest {
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -64.0, -64.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -305,11 +340,23 @@ public class CreatingNewMapsTest extends ApplicationTest {
 
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -48.0, -48.0));
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, 48.0, 48.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         Class<?> clazz = LevelEditorCanvas.class;
         try {
@@ -356,15 +403,40 @@ public class CreatingNewMapsTest extends ApplicationTest {
         type(KeyCode.ENTER);
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_DEST);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -48.0, -48.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_DEST);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -16.0, -16.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_TILE);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, 16.0, 16.0));
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, 48.0, 48.0));
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(saveNode);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
@@ -372,11 +444,20 @@ public class CreatingNewMapsTest extends ApplicationTest {
         // TODO(Derppening): Match behavior with sample JAR
 
         type(KeyCode.ENTER);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(offset(canvasNode, -16.0, -16.0));
 
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+
         clickOn(saveNode);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
@@ -384,10 +465,14 @@ public class CreatingNewMapsTest extends ApplicationTest {
         // TODO(Derppening): Match behavior with sample JAR
 
         type(KeyCode.ENTER);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         setBoardSize(3, 3);
 
         clickOn(saveNode);
+
+        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
 
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);

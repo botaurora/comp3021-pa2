@@ -16,6 +16,7 @@ import viewmodel.SceneManager;
 import viewmodel.customNodes.GameplayInfoPane;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Represents the gameplay pane in the game
@@ -179,8 +180,14 @@ public class GameplayPane extends BorderPane {
 
         box.getButtonTypes().setAll(restartButton, returnButton);
 
-        box.showAndWait();
-        if (box.getResult().getText().equals("Return")) {
+        Optional<ButtonType> result = box.showAndWait();
+        if (!result.isPresent()) {
+            if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
+                System.out.println("This is normal in CI environment");
+            } else {
+                System.err.println("Should be an impossible!");
+            }
+        } else if (box.getResult().getText().equals("Return")) {
             SceneManager.getInstance().showLevelSelectMenuScene();
             LevelManager.getInstance().resetNumRestarts();
         } else {
@@ -212,8 +219,14 @@ public class GameplayPane extends BorderPane {
             box.getButtonTypes().setAll(returnButton);
         }
 
-        box.showAndWait();
-        if (box.getResult().getText().equals("Return")) {
+        Optional<ButtonType> result = box.showAndWait();
+        if (!result.isPresent()) {
+            if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
+                System.out.println("This is normal in CI environment");
+            } else {
+                System.err.println("Should be an impossible!");
+            }
+        } else if (result.get().getText().equals("Return")) {
             SceneManager.getInstance().showLevelSelectMenuScene();
             LevelManager.getInstance().resetNumRestarts();
         } else {
