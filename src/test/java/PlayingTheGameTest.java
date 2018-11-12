@@ -594,7 +594,8 @@ public class PlayingTheGameTest extends ApplicationTest {
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
-            if (System.getenv("CI").equals("true")) {
+            // Alert.showAndWait will fail in Travis CI. skip it
+            if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 return;
             }
 
@@ -669,7 +670,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        if (System.getenv("CI").equals("true")) {
+        // Alert.showAndWait will fail in Travis CI. skip it
+        if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             return;
         }
 
@@ -733,7 +735,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        if (System.getenv("CI").equals("true")) {
+        // Alert.showAndWait will fail in Travis CI. skip it
+        if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             return;
         }
 
