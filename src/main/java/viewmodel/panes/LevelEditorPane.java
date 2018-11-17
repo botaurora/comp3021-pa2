@@ -101,6 +101,8 @@ public class LevelEditorPane extends BorderPane {
         for (Button b : Arrays.asList(returnButton, newGridButton, saveButton)) {
             b.getStyleClass().add("big-button");
         }
+
+        selectedBrush.setFixedCellSize(Config.LIST_CELL_HEIGHT);
     }
 
     /**

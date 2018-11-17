@@ -10,7 +10,6 @@ public class Config {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
-    // TODO(Derppening): What is this used for?
     public static final int LIST_CELL_HEIGHT = 30;
 
     public static final int LEVEL_EDITOR_TILE_SIZE = 32;
