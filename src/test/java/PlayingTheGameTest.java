@@ -44,6 +44,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 /**
  * Test cases for all conditions as specified by Compulsory Demo Tasks, Playing The Game section.
@@ -197,7 +198,7 @@ public class PlayingTheGameTest extends ApplicationTest {
                 }
             });
 
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            waitForFxEvents();
         } catch (URISyntaxException | NoSuchMethodException e) {
             fail();
         }
@@ -215,7 +216,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         Platform.runLater(() -> SceneManager.getInstance().setStage(stage));
         Platform.runLater(() -> SceneManager.getInstance().showLevelSelectMenuScene());
 
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
     }
 
     /**
@@ -226,8 +227,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         return Optional.ofNullable(
                 (Stage) allWindows.stream()
                         .filter(it -> it instanceof Stage)
-                        .filter(it -> ((Stage) it)
-                                .getModality() == Modality.APPLICATION_MODAL)
+                        .filter(it -> ((Stage) it).getModality() == Modality.APPLICATION_MODAL)
                         .findFirst()
                         .orElse(null));
     }
@@ -267,8 +267,8 @@ public class PlayingTheGameTest extends ApplicationTest {
                     fail();
                 }
             });
+            waitForFxEvents();
 
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
             assertEquals(0, ((ListView<?>) levelsListViewNode).getItems().size());
         } catch (URISyntaxException | NoSuchMethodException e) {
             fail();
@@ -289,8 +289,8 @@ public class PlayingTheGameTest extends ApplicationTest {
                     fail();
                 }
             });
+            waitForFxEvents();
 
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
             assertEquals(14, ((ListView<?>) levelsListViewNode).getItems().size());
         } catch (URISyntaxException | NoSuchMethodException e) {
             fail();
@@ -321,11 +321,9 @@ public class PlayingTheGameTest extends ApplicationTest {
         System.setErr(new PrintStream(stderrContent));
 
         clickOn(chooseDirNode);
-
         WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
 
         type(KeyCode.ESCAPE);
-
         WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
 
         assertTrue(stderrContent.toString().isEmpty());
@@ -369,8 +367,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         listView.getSelectionModel().select("02-easy.txt");
 
         clickOn(playNode);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -471,8 +468,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         listView.getSelectionModel().select("02-easy.txt");
 
         clickOn(playNode);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -509,8 +505,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             String timerFieldValue = ((Label) timerField.get(infoPane)).getText();
 
             clickOn(restartNode);
-
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            waitForFxEvents();
 
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
@@ -530,6 +525,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertTrue(((Occupiable) map[3][3]).getOccupant().orElse(null) instanceof Crate);
 
             clickOn(restartNode);
+            waitForFxEvents();
 
             assertEquals("Restarts: 2", ((Label) numRestartsField.get(infoPane)).getText());
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -560,8 +556,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         listView.getSelectionModel().select("02-easy.txt");
 
         clickOn(playNode);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -588,20 +583,19 @@ public class PlayingTheGameTest extends ApplicationTest {
             numRestartsField.setAccessible(true);
 
             type(DEADLOCK_MOVES);
-
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            waitForFxEvents();
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
             // Alert.showAndWait will fail in Travis CI. skip it
+            // TODO(Derppening): Use reflection to "forcefully" continue
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 return;
             }
 
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
-
             type(KeyCode.SPACE);
+            waitForFxEvents();
 
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
@@ -609,15 +603,13 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertEquals("Restarts: 1", ((Label) numRestartsField.get(infoPane)).getText());
 
             type(DEADLOCK_MOVES);
-
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            waitForFxEvents();
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
             type(KeyCode.RIGHT, KeyCode.SPACE);
-
-            WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+            waitForFxEvents();
 
             assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -648,8 +640,7 @@ public class PlayingTheGameTest extends ApplicationTest {
         listView.getSelectionModel().select("02-easy.txt");
 
         clickOn(playNode);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
@@ -671,12 +662,13 @@ public class PlayingTheGameTest extends ApplicationTest {
         assertNotNull(dialog);
 
         // Alert.showAndWait will fail in Travis CI. skip it
+        // TODO(Derppening): Use reflection to "forcefully" continue
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             return;
         }
 
         type(KeyCode.SPACE);
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Class<?> clazz = GameplayInfoPane.class;
         try {
@@ -722,28 +714,26 @@ public class PlayingTheGameTest extends ApplicationTest {
         listView.getSelectionModel().select("02-easy.txt");
 
         clickOn(playNode);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
         type(WIN_MOVES);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         // Alert.showAndWait will fail in Travis CI. skip it
+        // TODO(Derppening): Use reflection to "forcefully" continue
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             return;
         }
 
-        // TODO(Derppening): Ask TA about discrepancy for Marking Scheme vs JAR
+        // TODO(Derppening): Ask TA about discrepancy for Marking Scheme vs JAR -> Follow JAR
         type(KeyCode.RIGHT, KeyCode.SPACE);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
     }

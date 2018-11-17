@@ -1,7 +1,5 @@
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
@@ -17,6 +15,7 @@ import viewmodel.panes.SettingsPane;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 @ExtendWith(ApplicationExtension.class)
 public class SceneManagerTest extends ApplicationTest {
@@ -25,13 +24,13 @@ public class SceneManagerTest extends ApplicationTest {
     public void start(Stage stage) {
         Platform.runLater(() -> SceneManager.getInstance().setStage(stage));
 
-        WaitForAsyncUtils.sleep(100, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
     }
 
     @Test
     void testShowMainMenuScene() {
         Platform.runLater(() -> SceneManager.getInstance().showMainMenuScene());
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof MainMenuPane);
     }
@@ -39,7 +38,7 @@ public class SceneManagerTest extends ApplicationTest {
     @Test
     void testShowLevelSelectMenuScene() {
         Platform.runLater(() -> SceneManager.getInstance().showLevelSelectMenuScene());
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
     }
@@ -47,7 +46,7 @@ public class SceneManagerTest extends ApplicationTest {
     @Test
     void testShowLevelEditorScene() {
         Platform.runLater(() -> SceneManager.getInstance().showLevelEditorScene());
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelEditorPane);
     }
@@ -55,7 +54,7 @@ public class SceneManagerTest extends ApplicationTest {
     @Test
     void testShowSettingsMenuScene() {
         Platform.runLater(() -> SceneManager.getInstance().showSettingsMenuScene());
-        WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+        waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof SettingsPane);
     }
