@@ -3,9 +3,11 @@ package model;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import model.Exceptions.InvalidMapException;
+import model.Map.Cell;
 import model.Map.Map;
 import model.Map.Occupant.Crate;
 import model.Map.Occupiable.DestTile;
+import model.Map.Occupiable.Occupiable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,15 +71,36 @@ public class GameLevel {
      * @return Whether deadlock has occurred
      */
     public boolean isDeadlocked() {
-        for (Crate c : map.getCrates()) {
-            boolean canMoveLR = map.isOccupiableAndNotOccupiedWithCrate(c.getR(), c.getC() - 1)
-                    && map.isOccupiableAndNotOccupiedWithCrate(c.getR(), c.getC() + 1);
-            boolean canMoveUD = map.isOccupiableAndNotOccupiedWithCrate(c.getR() - 1, c.getC()) &&
-                    map.isOccupiableAndNotOccupiedWithCrate(c.getR() + 1, c.getC());
-            if (canMoveLR || canMoveUD)
-                return false;
+        return map.getCrates().stream().anyMatch(c -> !isCrateMovable(c)) && !isWin();
+    }
+
+    /**
+     * Checks whether a crate is movable.
+     *
+     * @param c Crate to check.
+     * @return True if the crate can still be moved.
+     */
+    private boolean isCrateMovable(Crate c) {
+        final Cell[][] cells = map.getCells();
+
+        Cell leftCell = cells[c.getR() - 1][c.getC()];
+        Cell rightCell = cells[c.getR() + 1][c.getC()];
+        Cell upCell = cells[c.getR()][c.getC() - 1];
+        Cell downCell = cells[c.getR()][c.getC() + 1];
+
+        if (leftCell instanceof Occupiable && rightCell instanceof Occupiable) {
+            if (!(((Occupiable) leftCell).getOccupant().isPresent() && ((Occupiable) rightCell).getOccupant().isPresent())) {
+                return true;
+            }
         }
-        return true;
+
+        if (upCell instanceof Occupiable && downCell instanceof Occupiable) {
+            if (!(((Occupiable) upCell).getOccupant().isPresent() && ((Occupiable) downCell).getOccupant().isPresent())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
