@@ -1,6 +1,5 @@
 package viewmodel.panes;
 
-import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -43,8 +42,6 @@ public class LevelSelectPane extends BorderPane {
         levelsListView = new ListView<>(LevelManager.getInstance().getLevelNames());
         centerContainer = new VBox(20);
         levelPreview = new Canvas();
-
-        playButton.setDisable(true);
 
         connectComponents();
         styleComponents();
@@ -93,6 +90,8 @@ public class LevelSelectPane extends BorderPane {
         for (Button b : Arrays.asList(returnButton, chooseMapDirButton, playButton)) {
             b.getStyleClass().add("big-button");
         }
+
+        playButton.setDisable(true);
     }
 
     /**

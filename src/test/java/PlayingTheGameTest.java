@@ -582,6 +582,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             numMovesField.setAccessible(true);
             numRestartsField.setAccessible(true);
 
+            // TODO(Derppening): Redetermine moves for deadlock
             type(DEADLOCK_MOVES);
             waitForFxEvents();
 

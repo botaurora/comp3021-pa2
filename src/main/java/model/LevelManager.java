@@ -68,8 +68,7 @@ public class LevelManager {
             levelNames.clear();
             levelNames.addAll(files);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalStateException(e.getMessage());
+            throw new IllegalStateException(e);
         }
     }
 
@@ -100,7 +99,6 @@ public class LevelManager {
         }
 
         try {
-            // TODO(Derppening): Ask TA about FileNotFoundException
             gameLevel.loadMap(Paths.get(mapDirectory, levelName).normalize().toAbsolutePath().toString());
         } catch (InvalidMapException e) {
             e.printStackTrace();
