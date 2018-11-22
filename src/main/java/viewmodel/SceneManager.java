@@ -55,6 +55,9 @@ public class SceneManager {
 
     public void showLevelSelectMenuScene() {
         LevelManager.getInstance().loadLevelNamesFromDisk();
+
+        ((LevelSelectPane) levelSelectScene.getRoot()).updateHighlightedLevel();
+
         showScene(levelSelectScene);
     }
 

@@ -61,6 +61,16 @@ public class LevelSelectPane extends BorderPane {
         }
     }
 
+    public void updateHighlightedLevel() {
+        String currentLevel = LevelManager.getInstance().currentLevelNameProperty().get();
+
+        if (currentLevel != null) {
+            levelsListView.getSelectionModel().select(currentLevel);
+        } else {
+            levelsListView.getSelectionModel().clearSelection();
+        }
+    }
+
     /**
      * Connects the components together (think adding them into another, setting their positions, etc). Reference
      * the other classes in the {@link javafx.scene.layout.Pane} package.
