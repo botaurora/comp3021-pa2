@@ -15,6 +15,7 @@ import viewmodel.MapRenderer;
 import viewmodel.SceneManager;
 import viewmodel.customNodes.GameplayInfoPane;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -230,10 +231,22 @@ public class GameplayPane extends BorderPane {
             SceneManager.getInstance().showLevelSelectMenuScene();
             LevelManager.getInstance().resetNumRestarts();
         } else {
-            try {
-                LevelManager.getInstance().setLevel(LevelManager.getInstance().getNextLevelName());
-            } catch (InvalidMapException e) {
-                doLoadMapFail();
+            String nextLevel = "";
+            while (nextLevel != null) {
+                try {
+                    nextLevel = LevelManager.getInstance().getNextLevelName();
+                    LevelManager.getInstance().setLevel(nextLevel);
+                    break;
+                } catch (InvalidMapException e) {
+                    LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
+                } catch (FileNotFoundException e) {
+                    Alert wBox = new Alert(Alert.AlertType.WARNING);
+                    wBox.setHeaderText("Cannot open map");
+                    wBox.setContentText(nextLevel + " is missing.");
+                    wBox.showAndWait();
+
+                    LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
+                }
             }
 
             renderCanvas();
@@ -253,8 +266,13 @@ public class GameplayPane extends BorderPane {
     private void doRestartAction() {
         try {
             LevelManager.getInstance().setLevel(LevelManager.getInstance().currentLevelNameProperty().getValue());
-        } catch (InvalidMapException e) {
-            doLoadMapFail();
+        } catch (FileNotFoundException | InvalidMapException e) {
+            Alert box = new Alert(Alert.AlertType.WARNING);
+            box.setHeaderText("Cannot open current map");
+            box.setContentText("You will be returned to the Main Menu.");
+            box.showAndWait();
+
+            SceneManager.getInstance().showMainMenuScene();
         }
 
         renderCanvas();

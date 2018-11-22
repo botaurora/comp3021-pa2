@@ -7,15 +7,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import model.Exceptions.InvalidMapException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,7 +68,12 @@ public class LevelManager {
             levelNames.clear();
             levelNames.addAll(files);
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            levelNames.clear();
+
+            Alert box = new Alert(Alert.AlertType.WARNING);
+            box.setHeaderText("Cannot open folder");
+            box.setContentText("Check if you have the permission to access this folder.");
+            Platform.runLater(box::showAndWait);
         }
     }
 
@@ -88,9 +93,11 @@ public class LevelManager {
      * the GameLevel object.
      *
      * @param levelName The level name to set
-     * @throws InvalidMapException if the map was invalid
+     *
+     * @throws FileNotFoundException if the level is not found.
+     * @throws InvalidMapException if the file contains an invalid map.
      */
-    public void setLevel(String levelName) throws InvalidMapException {
+    public void setLevel(String levelName) throws FileNotFoundException, InvalidMapException {
         gameLevel.numPushesProperty().set(0);
         resetLevelTimer();
 
@@ -98,13 +105,7 @@ public class LevelManager {
             throw new IllegalArgumentException("Invalid levelname: " + levelName);
         }
 
-        try {
-            gameLevel.loadMap(Paths.get(mapDirectory, levelName).normalize().toAbsolutePath().toString());
-        } catch (InvalidMapException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
+        gameLevel.loadMap(Paths.get(mapDirectory, levelName).normalize().toAbsolutePath().toString());
         this.curLevelNameProperty.setValue(levelName);
     }
 

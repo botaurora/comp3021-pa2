@@ -1,6 +1,7 @@
 package viewmodel.panes;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +14,7 @@ import viewmodel.MapRenderer;
 import viewmodel.SceneManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,10 +66,12 @@ public class LevelSelectPane extends BorderPane {
     public void updateHighlightedLevel() {
         String currentLevel = LevelManager.getInstance().currentLevelNameProperty().get();
 
-        if (currentLevel != null) {
+        levelsListView.getSelectionModel().clearSelection();
+        if (currentLevel != null && LevelManager.getInstance().getLevelNames().stream().anyMatch(it -> it.equals(currentLevel))) {
             levelsListView.getSelectionModel().select(currentLevel);
         } else {
-            levelsListView.getSelectionModel().clearSelection();
+            LevelManager.getInstance().currentLevelNameProperty().set("");
+            playButton.setDisable(true);
         }
     }
 
@@ -122,16 +126,15 @@ public class LevelSelectPane extends BorderPane {
             LevelManager manager = LevelManager.getInstance();
 
             try {
-                manager.setLevel(manager.currentLevelNameProperty().getValue());
+                manager.setLevel(levelsListView.getSelectionModel().getSelectedItem());
                 manager.resetNumRestarts();
                 manager.resetLevelTimer();
 
                 SceneManager.getInstance().showGamePlayScene();
 
                 manager.startLevelTimer();
-            } catch (InvalidMapException e) {
-                // TODO(Derppening): Gracefully fail!
-                throw new IllegalStateException("Cannot find destination map to load!");
+            } catch (InvalidMapException | FileNotFoundException e) {
+                throw new IllegalStateException("Cannot find destination map to load!", e);
             }
         });
         levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -146,10 +149,14 @@ public class LevelSelectPane extends BorderPane {
                 MapRenderer.render(levelPreview, LevelManager.getInstance().getGameLevel().getMap().getCells());
 
                 playButton.setDisable(false);
-            } catch (InvalidMapException e) {
-                // TODO(Derppening): Gracefully fail!
-                System.err.println("Invalid map selected!");
-                e.printStackTrace();
+            } catch (InvalidMapException | FileNotFoundException e) {
+                Alert box = new Alert(Alert.AlertType.WARNING);
+                box.setHeaderText("Invalid map!");
+                box.setContentText("Please select another level.");
+                box.showAndWait();
+
+                levelsListView.getSelectionModel().clearSelection();
+                levelsListView.getItems().remove(newValue);
             }
         });
     }

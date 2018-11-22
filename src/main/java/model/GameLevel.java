@@ -36,7 +36,7 @@ public class GameLevel {
      * @param filename the map text filename
      * @throws InvalidMapException when the map is invalid
      */
-    public void loadMap(String filename) throws InvalidMapException {
+    public void loadMap(String filename) throws FileNotFoundException, InvalidMapException {
         File f = new File(filename);
         try (Scanner reader = new Scanner(f)) {
             int numRows = reader.nextInt();
@@ -53,8 +53,6 @@ public class GameLevel {
 
             map = new Map();
             map.initialize(numRows, numCols, rep);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
