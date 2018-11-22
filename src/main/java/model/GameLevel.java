@@ -62,7 +62,7 @@ public class GameLevel {
      * @return Whether or not the win condition has been satisfied
      */
     public boolean isWin() {
-        return map.getDestTiles().stream().allMatch(DestTile::isCompleted);
+        return map.getDestTiles().parallelStream().allMatch(DestTile::isCompleted);
     }
 
     /**
@@ -71,7 +71,11 @@ public class GameLevel {
      * @return Whether deadlock has occurred
      */
     public boolean isDeadlocked() {
-        return map.getCrates().stream().anyMatch(c -> !isCrateMovable(c)) && !isWin();
+        return map.getCrates().parallelStream().anyMatch(c -> !isCrateOnDestTile(c) && !isCrateMovable(c)) && !isWin();
+    }
+
+    private boolean isCrateOnDestTile(Crate c) {
+        return map.getDestTiles().parallelStream().anyMatch(dt -> dt.getOccupant().orElse(null) == c);
     }
 
     /**

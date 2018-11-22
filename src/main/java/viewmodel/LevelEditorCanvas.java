@@ -221,13 +221,13 @@ public class LevelEditorCanvas extends Canvas {
         String reasonText = "";
 
         List<Brush> cells = Arrays.stream(map).flatMap(Arrays::stream).collect(Collectors.toList());
-        long numOfPlayers = cells.stream()
+        long numOfPlayers = cells.parallelStream()
                 .filter(it -> it.equals(Brush.PLAYER_ON_DEST) || it.equals(Brush.PLAYER_ON_TILE))
                 .count();
-        long numOfCrates = cells.stream()
+        long numOfCrates = cells.parallelStream()
                 .filter(it -> it.equals(Brush.CRATE_ON_DEST) || it.equals(Brush.CRATE_ON_TILE))
                 .count();
-        long numOfDests = cells.stream()
+        long numOfDests = cells.parallelStream()
                 .filter(it -> it.equals(Brush.DEST) || it.equals(Brush.CRATE_ON_DEST) || it.equals(Brush.PLAYER_ON_DEST))
                 .count();
 
