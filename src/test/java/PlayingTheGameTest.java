@@ -51,13 +51,21 @@ import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
  */
 public class PlayingTheGameTest extends ApplicationTest {
     /**
-     * Keycode sequence to deadlock 02-easy.txt.
+     * Keycode sequence to deadlock 02-easy.txt with lookahead deadlock detection (Bonus Task 3).
      */
-    private static final KeyCode[] DEADLOCK_MOVES = {
+    private static final KeyCode[] DEADLOCK_MOVES_1 = {
             KeyCode.A,
             KeyCode.D,
             KeyCode.S,
-            KeyCode.A,
+            KeyCode.A
+    };
+
+    /**
+     * Keycode sequence to deadlock 02-easy.txt without lookahead deadlock detection.
+     * <p>
+     * Use this in combination with {@code DEADLOCK_MOVES_1}.
+     */
+    private static final KeyCode[] DEADLOCK_MOVES_2 = {
             KeyCode.D,
             KeyCode.S,
             KeyCode.S,
@@ -407,8 +415,8 @@ public class PlayingTheGameTest extends ApplicationTest {
             Cell[][] map = levelManager.getGameLevel().getMap().getCells();
 
             // construct a dual-crate scenario
-            type(KeyCode.S, 3);
-            type(KeyCode.W, 4);
+            type(KeyCode.S, 4);
+            type(KeyCode.W, 5);
             type(KeyCode.A, 2);
             type(
                     KeyCode.S,
@@ -416,28 +424,28 @@ public class PlayingTheGameTest extends ApplicationTest {
                     KeyCode.W,
                     KeyCode.D
             );
-            type(KeyCode.S, 3);
-            assertTrue(((Occupiable) map[4][3]).getOccupant().orElse(null) instanceof Player);
-            assertTrue(((Occupiable) map[5][3]).getOccupant().orElse(null) instanceof Crate);
+            type(KeyCode.S, 4);
+            assertTrue(((Occupiable) map[5][3]).getOccupant().orElse(null) instanceof Player);
             assertTrue(((Occupiable) map[6][3]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 16", ((Label) numMovesField.get(infoPane)).getText());
+            assertTrue(((Occupiable) map[7][3]).getOccupant().orElse(null) instanceof Crate);
+            assertEquals("Moves: 19", ((Label) numMovesField.get(infoPane)).getText());
 
             // test push dual crates
             type(KeyCode.S);
-            assertTrue(((Occupiable) map[5][3]).getOccupant().orElse(null) instanceof Crate);
             assertTrue(((Occupiable) map[6][3]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 16", ((Label) numMovesField.get(infoPane)).getText());
+            assertTrue(((Occupiable) map[7][3]).getOccupant().orElse(null) instanceof Crate);
+            assertEquals("Moves: 19", ((Label) numMovesField.get(infoPane)).getText());
 
             // construct a wall-crate scenario
-            type(KeyCode.W, KeyCode.A);
+            type(KeyCode.W, KeyCode.W, KeyCode.A);
             assertTrue(((Occupiable) map[3][2]).getOccupant().orElse(null) instanceof Player);
             assertTrue(((Occupiable) map[3][1]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 18", ((Label) numMovesField.get(infoPane)).getText());
+            assertEquals("Moves: 22", ((Label) numMovesField.get(infoPane)).getText());
 
             // test push crate into wall
             type(KeyCode.A);
             assertTrue(((Occupiable) map[3][1]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 18", ((Label) numMovesField.get(infoPane)).getText());
+            assertEquals("Moves: 22", ((Label) numMovesField.get(infoPane)).getText());
 
             assertEquals("Restarts: 0", ((Label) numRestartsField.get(infoPane)).getText());
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -583,7 +591,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             numRestartsField.setAccessible(true);
 
             // TODO(Derppening): Redetermine moves for deadlock
-            type(DEADLOCK_MOVES);
+            type(DEADLOCK_MOVES_1);
             waitForFxEvents();
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -603,8 +611,13 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertEquals("Moves: 0", ((Label) numMovesField.get(infoPane)).getText());
             assertEquals("Restarts: 1", ((Label) numRestartsField.get(infoPane)).getText());
 
-            type(DEADLOCK_MOVES);
+            type(DEADLOCK_MOVES_1);
             waitForFxEvents();
+
+            if (!getTopModalStage().isPresent()) {
+                type(DEADLOCK_MOVES_2);
+                waitForFxEvents();
+            }
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
@@ -732,7 +745,6 @@ public class PlayingTheGameTest extends ApplicationTest {
             return;
         }
 
-        // TODO(Derppening): Ask TA about discrepancy for Marking Scheme vs JAR -> Follow JAR
         type(KeyCode.RIGHT, KeyCode.SPACE);
         waitForFxEvents();
 
