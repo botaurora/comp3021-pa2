@@ -569,7 +569,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
-        Node bottomBarNode = ((BorderPane) gameplayRoot).getBottom();
+        GameplayPane gameplayPane = ((GameplayPane) gameplayRoot);
+        Node bottomBarNode = gameplayPane.getBottom();
 
         Node infoNode = ((HBox) bottomBarNode).getChildrenUnmodifiable().stream()
                 .filter(it -> it instanceof GameplayInfoPane)
@@ -578,19 +579,19 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-        Class<?> clazz = GameplayInfoPane.class;
+        Class<?> gpClazz = GameplayPane.class;
+        Class<?> gpInfoClazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = clazz.getDeclaredField("levelNameLabel");
-            Field timerField = clazz.getDeclaredField("timerLabel");
-            Field numMovesField = clazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = clazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = gpInfoClazz.getDeclaredField("levelNameLabel");
+            Field timerField = gpInfoClazz.getDeclaredField("timerLabel");
+            Field numMovesField = gpInfoClazz.getDeclaredField("numMovesLabel");
+            Field numRestartsField = gpInfoClazz.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
             numMovesField.setAccessible(true);
             numRestartsField.setAccessible(true);
 
-            // TODO(Derppening): Redetermine moves for deadlock
             type(DEADLOCK_MOVES_1);
             waitForFxEvents();
 
@@ -598,12 +599,14 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertNotNull(dialog);
 
             // Alert.showAndWait will fail in Travis CI. skip it
-            // TODO(Derppening): Use reflection to "forcefully" continue
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                return;
-            }
+                Method loadNextLevelMethod = gpClazz.getDeclaredMethod("doRestartAction");
+                loadNextLevelMethod.setAccessible(true);
 
-            type(KeyCode.SPACE);
+                loadNextLevelMethod.invoke(gameplayPane);
+            } else {
+                type(KeyCode.SPACE);
+            }
             waitForFxEvents();
 
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
@@ -622,11 +625,18 @@ public class PlayingTheGameTest extends ApplicationTest {
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
-            type(KeyCode.RIGHT, KeyCode.SPACE);
+            if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
+                Method loadNextLevelMethod = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                loadNextLevelMethod.setAccessible(true);
+
+                loadNextLevelMethod.invoke(gameplayPane);
+            } else {
+                type(KeyCode.RIGHT, KeyCode.SPACE);
+            }
             waitForFxEvents();
 
             assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             fail();
         }
     }
@@ -659,7 +669,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
-        Node bottomBarNode = ((BorderPane) gameplayRoot).getBottom();
+        GameplayPane gameplayPane = ((GameplayPane) gameplayRoot);
+        Node bottomBarNode = gameplayPane.getBottom();
 
         Node infoNode = ((HBox) bottomBarNode).getChildrenUnmodifiable().stream()
                 .filter(it -> it instanceof GameplayInfoPane)
@@ -669,19 +680,25 @@ public class PlayingTheGameTest extends ApplicationTest {
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
         type(WIN_MOVES);
-
-        WaitForAsyncUtils.sleep(500, TimeUnit.MILLISECONDS);
+        waitForFxEvents();
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         // Alert.showAndWait will fail in Travis CI. skip it
-        // TODO(Derppening): Use reflection to "forcefully" continue
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            return;
-        }
+            Class<?> gpClazz = GameplayPane.class;
+            try {
+                Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
+                m.setAccessible(true);
 
-        type(KeyCode.SPACE);
+                m.invoke(gameplayPane);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                fail();
+            }
+        } else {
+            type(KeyCode.SPACE);
+        }
         waitForFxEvents();
 
         Class<?> clazz = GameplayInfoPane.class;
@@ -733,6 +750,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
+        GameplayPane gameplayPane = ((GameplayPane) gameplayRoot);
+
         type(WIN_MOVES);
         waitForFxEvents();
 
@@ -742,10 +761,18 @@ public class PlayingTheGameTest extends ApplicationTest {
         // Alert.showAndWait will fail in Travis CI. skip it
         // TODO(Derppening): Use reflection to "forcefully" continue
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            return;
-        }
+            Class<?> gpClazz = GameplayPane.class;
+            try {
+                Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                m.setAccessible(true);
 
-        type(KeyCode.RIGHT, KeyCode.SPACE);
+                m.invoke(gameplayPane);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                fail();
+            }
+        } else {
+            type(KeyCode.RIGHT, KeyCode.SPACE);
+        }
         waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
