@@ -183,12 +183,16 @@ public class GameplayPane extends BorderPane {
 
         box.showAndWait();
         if (box.getResult().equals(ButtonType.OK)) {
-            LevelManager manager = LevelManager.getInstance();
-            manager.resetLevelTimer();
-            manager.resetNumRestarts();
-
-            SceneManager.getInstance().showMainMenuScene();
+            doQuitToMainMenu();
         }
+    }
+
+    private void doQuitToMainMenu() {
+        LevelManager manager = LevelManager.getInstance();
+        manager.resetLevelTimer();
+        manager.resetNumRestarts();
+
+        SceneManager.getInstance().showMainMenuScene();
     }
 
     /**
@@ -215,8 +219,7 @@ public class GameplayPane extends BorderPane {
                 System.err.println("Should be an impossible!");
             }
         } else if (box.getResult().getText().equals("Return")) {
-            SceneManager.getInstance().showLevelSelectMenuScene();
-            LevelManager.getInstance().resetNumRestarts();
+            doReturnToLevelSelectMenu();
         } else {
             doRestartAction();
         }
@@ -254,35 +257,44 @@ public class GameplayPane extends BorderPane {
                 System.err.println("Should be an impossible!");
             }
         } else if (result.get().getText().equals("Return")) {
-            SceneManager.getInstance().showLevelSelectMenuScene();
-            LevelManager.getInstance().resetNumRestarts();
+            doReturnToLevelSelectMenu();
         } else {
-            String nextLevel = "";
-            while (nextLevel != null) {
-                try {
-                    nextLevel = LevelManager.getInstance().getNextLevelName();
-                    LevelManager.getInstance().setLevel(nextLevel);
-                    break;
-                } catch (InvalidMapException e) {
-                    LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
-                } catch (FileNotFoundException e) {
-                    Alert wBox = new Alert(Alert.AlertType.WARNING);
-                    wBox.setHeaderText("Cannot open map");
-                    wBox.setContentText(nextLevel + " is missing.");
-                    wBox.showAndWait();
-
-                    LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
-                }
-            }
-
-            renderCanvas();
-
-            LevelManager.getInstance().resetNumRestarts();
-            LevelManager.getInstance().resetLevelTimer();
-            LevelManager.getInstance().curGameLevelExistedDurationProperty().set(0);
-            LevelManager.getInstance().getGameLevel().numPushesProperty().setValue(0);
-            LevelManager.getInstance().startLevelTimer();
+            doLoadNextLevel();
         }
+    }
+
+    private void doReturnToLevelSelectMenu() {
+        SceneManager.getInstance().showLevelSelectMenuScene();
+        LevelManager.getInstance().resetNumRestarts();
+    }
+
+    private void doLoadNextLevel() {
+        String nextLevel = "";
+        while (nextLevel != null) {
+            try {
+                nextLevel = LevelManager.getInstance().getNextLevelName();
+                LevelManager.getInstance().setLevel(nextLevel);
+                break;
+            } catch (InvalidMapException e) {
+                LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
+            } catch (FileNotFoundException e) {
+                Alert wBox = new Alert(Alert.AlertType.WARNING);
+                wBox.setHeaderText("Cannot open map");
+                wBox.setContentText(nextLevel + " is missing.");
+                wBox.showAndWait();
+
+                LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
+            }
+        }
+
+        renderCanvas();
+
+        LevelManager.getInstance().getGameLevel().getMap().getHistory().clear();
+        LevelManager.getInstance().resetNumRestarts();
+        LevelManager.getInstance().resetLevelTimer();
+        LevelManager.getInstance().curGameLevelExistedDurationProperty().set(0);
+        LevelManager.getInstance().getGameLevel().numPushesProperty().setValue(0);
+        LevelManager.getInstance().startLevelTimer();
     }
 
     /**
@@ -302,18 +314,13 @@ public class GameplayPane extends BorderPane {
         }
 
         renderCanvas();
+
+        LevelManager.getInstance().getGameLevel().getMap().getHistory().clear();
         LevelManager.getInstance().resetLevelTimer();
         LevelManager.getInstance().incrementNumRestarts();
         LevelManager.getInstance().curGameLevelExistedDurationProperty().set(0);
         LevelManager.getInstance().getGameLevel().numPushesProperty().setValue(0);
         LevelManager.getInstance().startLevelTimer();
-    }
-
-    private void doLoadMapFail() {
-        // TODO(Derppening): Gracefully fail!
-        Alert box = new Alert(Alert.AlertType.ERROR, "Unable to load map!");
-        box.showAndWait();
-        SceneManager.getInstance().showMainMenuScene();
     }
 
     /**
