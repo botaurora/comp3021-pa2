@@ -147,7 +147,6 @@ public class LevelEditorCanvas extends Canvas {
      * the selected location.
      */
     public void saveToFile() {
-        //TODO: Check
         if (isInvalidMap()) {
             return;
         }
@@ -155,6 +154,10 @@ public class LevelEditorCanvas extends Canvas {
         File f = getTargetSaveDirectory();
         if (f != null) {
             try {
+                if (f.exists()) {
+                    f.delete();
+                }
+
                 if (!f.createNewFile()) {
                     System.err.println("Unable to create new file!");
                     return;
@@ -180,6 +183,7 @@ public class LevelEditorCanvas extends Canvas {
                             }
                         });
 
+                        bf.newLine();
                     }
                 }
             } catch (IOException e) {
@@ -197,8 +201,6 @@ public class LevelEditorCanvas extends Canvas {
      * @return The directory the user chose to save the map in.
      */
     private File getTargetSaveDirectory() {
-        //TODO: Check
-
         FileChooser chooser = new FileChooser();
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Normal text file", Collections.singletonList("*.txt")));
 

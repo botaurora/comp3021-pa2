@@ -85,6 +85,7 @@ public class GameLevel {
     private boolean isCrateMovable(Crate c) {
         final Cell[][] cells = map.getCells();
 
+        // TODO(Derppening): Ask TA whether I can assume levels are always surrounded by walls
         Cell leftCell = cells[c.getR() - 1][c.getC()];
         Cell rightCell = cells[c.getR() + 1][c.getC()];
         Cell upCell = cells[c.getR()][c.getC() - 1];
