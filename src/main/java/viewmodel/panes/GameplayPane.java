@@ -83,6 +83,8 @@ public class GameplayPane extends BorderPane {
         for (Button b : Arrays.asList(undoButton, restartButton, quitToMenuButton)) {
             b.getStyleClass().add("big-button");
         }
+
+        undoButton.setDisable(true);
     }
 
     /**
@@ -107,7 +109,7 @@ public class GameplayPane extends BorderPane {
 
             renderCanvas();
 
-            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isNotEmpty());
+            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isEmpty());
         });
 
         this.setOnKeyPressed(event -> {
@@ -145,7 +147,7 @@ public class GameplayPane extends BorderPane {
 
             renderCanvas();
 
-            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isNotEmpty());
+            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isEmpty());
 
             if (audio.isEnabled()) {
                 audio.playMoveSound();
@@ -289,6 +291,8 @@ public class GameplayPane extends BorderPane {
 
         renderCanvas();
 
+        undoButton.setDisable(true);
+
         LevelManager.getInstance().getGameLevel().getMap().getHistory().clear();
         LevelManager.getInstance().resetNumRestarts();
         LevelManager.getInstance().resetLevelTimer();
@@ -314,6 +318,8 @@ public class GameplayPane extends BorderPane {
         }
 
         renderCanvas();
+
+        undoButton.setDisable(true);
 
         LevelManager.getInstance().getGameLevel().getMap().getHistory().clear();
         LevelManager.getInstance().resetLevelTimer();

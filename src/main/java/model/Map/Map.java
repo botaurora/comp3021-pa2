@@ -71,8 +71,8 @@ public class Map {
             crates.forEach(c -> ((Occupiable) cells[c.getR()][c.getC()]).setOccupant(c));
         }
 
-        public boolean isNotEmpty() {
-            return !states.empty();
+        public boolean isEmpty() {
+            return states.empty();
         }
 
         public void clear() {
