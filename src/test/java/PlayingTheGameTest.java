@@ -386,6 +386,10 @@ public class PlayingTheGameTest extends ApplicationTest {
                 .filter(it -> it instanceof GameplayInfoPane)
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
+        Node restartNode = ((HBox) bottomBarNode).getChildrenUnmodifiable().stream()
+                .filter(it -> it instanceof Button && ((Button) it).getText().equals("Restart"))
+                .findFirst()
+                .orElseThrow(PropertyNotFoundException::new);
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
@@ -425,6 +429,8 @@ public class PlayingTheGameTest extends ApplicationTest {
                     KeyCode.D
             );
             type(KeyCode.S, 4);
+            waitForFxEvents();
+
             assertTrue(((Occupiable) map[5][3]).getOccupant().orElse(null) instanceof Player);
             assertTrue(((Occupiable) map[6][3]).getOccupant().orElse(null) instanceof Crate);
             assertTrue(((Occupiable) map[7][3]).getOccupant().orElse(null) instanceof Crate);
@@ -432,22 +438,39 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             // test push dual crates
             type(KeyCode.S);
+            waitForFxEvents();
+
             assertTrue(((Occupiable) map[6][3]).getOccupant().orElse(null) instanceof Crate);
             assertTrue(((Occupiable) map[7][3]).getOccupant().orElse(null) instanceof Crate);
             assertEquals("Moves: 19", ((Label) numMovesField.get(infoPane)).getText());
 
+            // restart the map
+            clickOn(restartNode);
+            waitForFxEvents();
+
+            map = levelManager.getGameLevel().getMap().getCells();
+
+            assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
+            assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
+            assertEquals("Moves: 0", ((Label) numMovesField.get(infoPane)).getText());
+            assertEquals("Restarts: 1", ((Label) numRestartsField.get(infoPane)).getText());
+
             // construct a wall-crate scenario
-            type(KeyCode.W, KeyCode.W, KeyCode.A);
-            assertTrue(((Occupiable) map[3][2]).getOccupant().orElse(null) instanceof Player);
-            assertTrue(((Occupiable) map[3][1]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 22", ((Label) numMovesField.get(infoPane)).getText());
+            type(KeyCode.A);
+            waitForFxEvents();
+
+            assertTrue(((Occupiable) map[2][2]).getOccupant().orElse(null) instanceof Player, "Got " + ((Occupiable) map[2][2]).getOccupant().orElse(null).toString());
+            assertTrue(((Occupiable) map[2][1]).getOccupant().orElse(null) instanceof Crate);
+            assertEquals("Moves: 1", ((Label) numMovesField.get(infoPane)).getText());
 
             // test push crate into wall
             type(KeyCode.A);
-            assertTrue(((Occupiable) map[3][1]).getOccupant().orElse(null) instanceof Crate);
-            assertEquals("Moves: 22", ((Label) numMovesField.get(infoPane)).getText());
+            waitForFxEvents();
 
-            assertEquals("Restarts: 0", ((Label) numRestartsField.get(infoPane)).getText());
+            assertTrue(((Occupiable) map[2][1]).getOccupant().orElse(null) instanceof Crate);
+            assertEquals("Moves: 1", ((Label) numMovesField.get(infoPane)).getText());
+
+            assertEquals("Restarts: 1", ((Label) numRestartsField.get(infoPane)).getText());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             fail();
         }
@@ -759,7 +782,6 @@ public class PlayingTheGameTest extends ApplicationTest {
         assertNotNull(dialog);
 
         // Alert.showAndWait will fail in Travis CI. skip it
-        // TODO(Derppening): Use reflection to "forcefully" continue
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             Class<?> gpClazz = GameplayPane.class;
             try {
