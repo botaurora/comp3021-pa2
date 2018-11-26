@@ -11,6 +11,8 @@ import model.Map.Occupiable.Tile;
 import viewmodel.LevelEditorCanvas;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * A class holding a the 2D array of cells, representing the world map
@@ -21,6 +23,62 @@ public class Map {
     private ArrayList<Crate> crates = new ArrayList<>();
 
     private Player player;
+
+    private History states = new History();
+
+    public class History {
+        private class State {
+            private Direction playerDir;
+            private final List<Crate> crates = new ArrayList<>();
+        }
+
+        private Stack<State> states = new Stack<>();
+
+        public void save(Direction d) {
+            State s = new State();
+            s.playerDir = d;
+            crates.forEach(c -> s.crates.add(c.clone()));
+            states.push(s);
+        }
+
+        public void pop() {
+            states.pop();
+        }
+
+        public void restore() {
+            State s = states.pop();
+            ((Occupiable) cells[player.getR()][player.getC()]).removeOccupant();
+            switch (s.playerDir) {
+                case UP:
+                    player.setPos(player.getR() + 1, player.getC());
+                    break;
+                case DOWN:
+                    player.setPos(player.getR() - 1, player.getC());
+                    break;
+                case LEFT:
+                    player.setPos(player.getR(), player.getC() + 1);
+                    break;
+                case RIGHT:
+                    player.setPos(player.getR(), player.getC() - 1);
+                    break;
+            }
+
+            ((Occupiable) cells[player.getR()][player.getC()]).setOccupant(player);
+
+            crates.forEach(c -> ((Occupiable) cells[c.getR()][c.getC()]).removeOccupant());
+            crates.clear();
+            crates.addAll(s.crates);
+            crates.forEach(c -> ((Occupiable) cells[c.getR()][c.getC()]).setOccupant(c));
+        }
+
+        public boolean isNotEmpty() {
+            return !states.empty();
+        }
+
+        public void clear() {
+            states.clear();
+        }
+    }
 
     /**
      * This function instantiates and initializes cells, destTiles, crates to the correct map elements (e.g. the # char
@@ -109,6 +167,10 @@ public class Map {
 
     public Cell[][] getCells() {
         return cells;
+    }
+
+    public History getHistory() {
+        return states;
     }
 
     /**

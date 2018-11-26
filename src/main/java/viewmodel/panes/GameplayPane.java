@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Exceptions.InvalidMapException;
 import model.LevelManager;
+import model.Map.Map;
 import viewmodel.AudioManager;
 import viewmodel.MapRenderer;
 import viewmodel.SceneManager;
@@ -28,6 +29,7 @@ public class GameplayPane extends BorderPane {
     private VBox canvasContainer;
     private Canvas gamePlayCanvas;
     private HBox buttonBar;
+    private Button undoButton;
     private Button restartButton;
     private Button quitToMenuButton;
 
@@ -42,6 +44,7 @@ public class GameplayPane extends BorderPane {
         canvasContainer = new VBox(20);
         gamePlayCanvas = new Canvas();
         buttonBar = new HBox(20);
+        undoButton = new Button("Undo");
         restartButton = new Button("Restart");
         quitToMenuButton = new Button("Quit to menu");
 
@@ -61,6 +64,7 @@ public class GameplayPane extends BorderPane {
         );
         buttonBar.getChildren().addAll(
                 info,
+                undoButton,
                 restartButton,
                 quitToMenuButton
         );
@@ -76,7 +80,7 @@ public class GameplayPane extends BorderPane {
         buttonBar.getStyleClass().add("bottom-menu");
         canvasContainer.getStyleClass().add("big-vbox");
 
-        for (Button b : Arrays.asList(restartButton, quitToMenuButton)) {
+        for (Button b : Arrays.asList(undoButton, restartButton, quitToMenuButton)) {
             b.getStyleClass().add("big-button");
         }
     }
@@ -96,28 +100,52 @@ public class GameplayPane extends BorderPane {
         restartButton.setOnAction(event -> doRestartAction());
         quitToMenuButton.setOnAction(event -> doQuitToMenuAction());
 
+        undoButton.setOnAction(event -> {
+            LevelManager lvl = LevelManager.getInstance();
+
+            lvl.getGameLevel().getMap().getHistory().restore();
+
+            renderCanvas();
+
+            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isNotEmpty());
+        });
+
         this.setOnKeyPressed(event -> {
             LevelManager lvl = LevelManager.getInstance();
             AudioManager audio = AudioManager.getInstance();
 
             switch (event.getCode()) {
                 case W:
-                    lvl.getGameLevel().makeMove('w');
+                    lvl.getGameLevel().getMap().getHistory().save(Map.Direction.UP);
+                    if (!lvl.getGameLevel().makeMove('w')) {
+                        lvl.getGameLevel().getMap().getHistory().pop();
+                    }
                     break;
                 case A:
-                    lvl.getGameLevel().makeMove('a');
+                    lvl.getGameLevel().getMap().getHistory().save(Map.Direction.LEFT);
+                    if (!lvl.getGameLevel().makeMove('a')) {
+                        lvl.getGameLevel().getMap().getHistory().pop();
+                    }
                     break;
                 case S:
-                    lvl.getGameLevel().makeMove('s');
+                    lvl.getGameLevel().getMap().getHistory().save(Map.Direction.DOWN);
+                    if (!lvl.getGameLevel().makeMove('s')) {
+                        lvl.getGameLevel().getMap().getHistory().pop();
+                    }
                     break;
                 case D:
-                    lvl.getGameLevel().makeMove('d');
+                    lvl.getGameLevel().getMap().getHistory().save(Map.Direction.RIGHT);
+                    if (!lvl.getGameLevel().makeMove('d')) {
+                        lvl.getGameLevel().getMap().getHistory().pop();
+                    }
                     break;
                 default:
                     // not handled
             }
 
             renderCanvas();
+
+            undoButton.setDisable(lvl.getGameLevel().getMap().getHistory().isNotEmpty());
 
             if (audio.isEnabled()) {
                 audio.playMoveSound();
@@ -128,7 +156,6 @@ public class GameplayPane extends BorderPane {
                     audio.playWinSound();
                 }
 
-                // TODO(Derppening): Check with JAR
                 lvl.resetLevelTimer();
                 createLevelClearPopup();
             } else if (lvl.getGameLevel().isDeadlocked()) {
@@ -136,7 +163,6 @@ public class GameplayPane extends BorderPane {
                     audio.playDeadlockSound();
                 }
 
-                // TODO(Derppening): Check with JAR
                 lvl.resetLevelTimer();
                 createDeadlockedPopup();
             }
