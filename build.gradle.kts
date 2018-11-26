@@ -1,4 +1,13 @@
-import java.io.File
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins", "shadow")
+    }
+}
 
 repositories {
     mavenCentral()
@@ -7,6 +16,7 @@ repositories {
 plugins {
     application
     java
+    id("com.github.johnrengelman.shadow") version "4.0.3"
 }
 
 application {
@@ -19,8 +29,8 @@ java {
 }
 
 dependencies {
-    val junit = "5.3.1"
-    val junitPlatform = "1.3.1"
+    val junit = "5.3.2"
+    val junitPlatform = "1.3.2"
     val testfx = "4.0.15-alpha"
 
     compile("org.jetbrains:annotations:16.0.3")
@@ -48,22 +58,16 @@ tasks {
     }
 
     getByName<Wrapper>("wrapper") {
-        gradleVersion = "4.10.2"
+        gradleVersion = "5.0"
         distributionType = Wrapper.DistributionType.ALL
     }
 
-    register("fatJar", Jar::class) {
-        dependsOn("jar")
-
+    getByName<ShadowJar>("shadowJar") {
         manifest {
             attributes.apply {
                 this["Implementation-Title"] = "PA2"
                 this["Main-Class"] = application.mainClassName
             }
         }
-
-        baseName = "${project.name}-all"
-        from(configurations.compile.map { if (it.isDirectory) it else zipTree(it) })
-        with(tasks["jar"] as CopySpec)
     }
 }
