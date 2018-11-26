@@ -348,11 +348,6 @@ public class PlayingTheGameTest extends ApplicationTest {
     }
 
     @Test
-    void testMapDisplay() {
-        // TODO(Derppening): Think of a way to do it
-    }
-
-    @Test
     void testBasicGameParameters() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(levelSelectRoot instanceof LevelSelectPane);
@@ -623,10 +618,16 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             // Alert.showAndWait will fail in Travis CI. skip it
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Method loadNextLevelMethod = gpClazz.getDeclaredMethod("doRestartAction");
-                loadNextLevelMethod.setAccessible(true);
+                Method m = gpClazz.getDeclaredMethod("doRestartAction");
+                m.setAccessible(true);
 
-                loadNextLevelMethod.invoke(gameplayPane);
+                Platform.runLater(() -> {
+                    try {
+                        m.invoke(gameplayPane);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        fail();
+                    }
+                });
             } else {
                 type(KeyCode.SPACE);
             }
@@ -649,17 +650,23 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Method loadNextLevelMethod = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
-                loadNextLevelMethod.setAccessible(true);
+                Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                m.setAccessible(true);
 
-                loadNextLevelMethod.invoke(gameplayPane);
+                Platform.runLater(() -> {
+                    try {
+                        m.invoke(gameplayPane);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        fail();
+                    }
+                });
             } else {
                 type(KeyCode.RIGHT, KeyCode.SPACE);
             }
             waitForFxEvents();
 
             assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
-        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException e) {
             fail();
         }
     }
@@ -715,8 +722,14 @@ public class PlayingTheGameTest extends ApplicationTest {
                 Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
                 m.setAccessible(true);
 
-                m.invoke(gameplayPane);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                Platform.runLater(() -> {
+                    try {
+                        m.invoke(gameplayPane);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        fail();
+                    }
+                });
+            } catch (NoSuchMethodException e) {
                 fail();
             }
         } else {
@@ -788,8 +801,14 @@ public class PlayingTheGameTest extends ApplicationTest {
                 Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
                 m.setAccessible(true);
 
-                m.invoke(gameplayPane);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                Platform.runLater(() -> {
+                    try {
+                        m.invoke(gameplayPane);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        fail();
+                    }
+                });
+            } catch (NoSuchMethodException e) {
                 fail();
             }
         } else {

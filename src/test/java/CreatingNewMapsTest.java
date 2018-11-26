@@ -353,7 +353,6 @@ public class CreatingNewMapsTest extends ApplicationTest {
     }
 
     /**
-     * TODO(Derppening): Refactor into even smaller test cases
      * <p>Tests for Condition G:</p>
      *
      * <p>Have the student demonstrate that the following map conditions cannot be violated when trying to
