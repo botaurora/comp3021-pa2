@@ -85,11 +85,10 @@ public class GameLevel {
     private boolean isCrateMovable(Crate c) {
         final Cell[][] cells = map.getCells();
 
-        // TODO(Derppening): Ask TA whether I can assume levels are always surrounded by walls
-        Cell leftCell = cells[c.getR() - 1][c.getC()];
-        Cell rightCell = cells[c.getR() + 1][c.getC()];
-        Cell upCell = cells[c.getR()][c.getC() - 1];
-        Cell downCell = cells[c.getR()][c.getC() + 1];
+        Cell leftCell = c.getR() - 1 >= 0 ? cells[c.getR() - 1][c.getC()] : null;
+        Cell rightCell = c.getR() + 1 < cells.length ? cells[c.getR() + 1][c.getC()] : null;
+        Cell upCell = c.getC() - 1 >= 0 ? cells[c.getR()][c.getC() - 1] : null;
+        Cell downCell = c.getC() + 1 < cells[c.getR()].length ? cells[c.getR()][c.getC() + 1] : null;
 
         if (leftCell instanceof Occupiable && rightCell instanceof Occupiable) {
             if (!(((Occupiable) leftCell).getOccupant().isPresent() && ((Occupiable) rightCell).getOccupant().isPresent())) {
