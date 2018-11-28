@@ -299,7 +299,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             });
             waitForFxEvents();
 
-            assertEquals(14, ((ListView<?>) levelsListViewNode).getItems().size());
+            assertEquals(15, ((ListView<?>) levelsListViewNode).getItems().size());
         } catch (URISyntaxException | NoSuchMethodException e) {
             fail();
         }
@@ -715,7 +715,6 @@ public class PlayingTheGameTest extends ApplicationTest {
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        // Alert.showAndWait will fail in Travis CI. skip it
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             Class<?> gpClazz = GameplayPane.class;
             try {
