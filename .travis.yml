@@ -6,9 +6,6 @@ jdk: oraclejdk8
 
 sudo: false
 
-env:
-  - TRAVIS_ALLOW_FAILURE=true
-
 matrix:
   include:
     # Headed Linux
