@@ -280,7 +280,9 @@ public class GameplayPane extends BorderPane {
             } catch (InvalidMapException e) {
                 LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
             } catch (FileNotFoundException e) {
-                if (!(System.getenv("CI") != null && System.getenv("CI").equals("true"))) {
+                if ((System.getenv("CI") != null && System.getenv("CI").equals("true"))) {
+                    System.out.println("CI environment detected: Skipping popup");
+                } else {
                     Alert wBox = new Alert(Alert.AlertType.WARNING);
                     wBox.setHeaderText("Cannot open map");
                     wBox.setContentText(nextLevel + " is missing.");

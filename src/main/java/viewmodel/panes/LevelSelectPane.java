@@ -150,10 +150,14 @@ public class LevelSelectPane extends BorderPane {
 
                 playButton.setDisable(false);
             } catch (InvalidMapException | FileNotFoundException e) {
-                Alert box = new Alert(Alert.AlertType.WARNING);
-                box.setHeaderText("Invalid map!");
-                box.setContentText("Please select another level.");
-                box.showAndWait();
+                if ((System.getenv("CI") != null && System.getenv("CI").equals("true"))) {
+                    System.out.println("CI environment detected: Skipping popup");
+                } else {
+                    Alert box = new Alert(Alert.AlertType.WARNING);
+                    box.setHeaderText("Invalid map!");
+                    box.setContentText("Please select another level.");
+                    box.showAndWait();
+                }
 
                 levelsListView.getSelectionModel().clearSelection();
                 levelsListView.getItems().remove(newValue);
