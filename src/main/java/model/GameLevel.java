@@ -6,6 +6,7 @@ import model.Exceptions.InvalidMapException;
 import model.Map.Cell;
 import model.Map.Map;
 import model.Map.Occupant.Crate;
+import model.Map.Occupant.Player;
 import model.Map.Occupiable.DestTile;
 import model.Map.Occupiable.Occupiable;
 
@@ -91,13 +92,13 @@ public class GameLevel {
         Cell downCell = c.getC() + 1 < cells[c.getR()].length ? cells[c.getR()][c.getC() + 1] : null;
 
         if (leftCell instanceof Occupiable && rightCell instanceof Occupiable) {
-            if (!(((Occupiable) leftCell).getOccupant().isPresent() && ((Occupiable) rightCell).getOccupant().isPresent())) {
+            if (!(((Occupiable) leftCell).getOccupant().orElse(null) instanceof Player && ((Occupiable) rightCell).getOccupant().orElse(null) instanceof Player)) {
                 return true;
             }
         }
 
         if (upCell instanceof Occupiable && downCell instanceof Occupiable) {
-            if (!(((Occupiable) upCell).getOccupant().isPresent() && ((Occupiable) downCell).getOccupant().isPresent())) {
+            if (!(((Occupiable) upCell).getOccupant().orElse(null) instanceof Player && ((Occupiable) downCell).getOccupant().orElse(null) instanceof Player)) {
                 return true;
             }
         }
