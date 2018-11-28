@@ -280,10 +280,13 @@ public class GameplayPane extends BorderPane {
             } catch (InvalidMapException e) {
                 LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
             } catch (FileNotFoundException e) {
-                Alert wBox = new Alert(Alert.AlertType.WARNING);
-                wBox.setHeaderText("Cannot open map");
-                wBox.setContentText(nextLevel + " is missing.");
-                wBox.showAndWait();
+                if (!(System.getenv("CI") != null && System.getenv("CI").equals("true"))) {
+                    Alert wBox = new Alert(Alert.AlertType.WARNING);
+                    wBox.setHeaderText("Cannot open map");
+                    wBox.setContentText(nextLevel + " is missing.");
+                    wBox.showAndWait();
+                }
+
 
                 LevelManager.getInstance().currentLevelNameProperty().set(nextLevel);
             }
