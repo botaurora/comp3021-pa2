@@ -377,8 +377,6 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        // TODO(Derppening): Match behavior with sample JAR
-
         type(KeyCode.ENTER);
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_DEST);
@@ -411,8 +409,6 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        // TODO(Derppening): Match behavior with sample JAR
-
         type(KeyCode.ENTER);
         waitForFxEvents();
 
@@ -428,20 +424,34 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        // TODO(Derppening): Match behavior with sample JAR
-
         type(KeyCode.ENTER);
         waitForFxEvents();
 
         setBoardSize(2, 2);
+
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
+        waitForFxEvents();
+
+        clickOn(offset(canvasNode, -16.0, -16.0));
+        waitForFxEvents();
+
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_TILE);
+        waitForFxEvents();
+
+        clickOn(offset(canvasNode, 16.0, -16.0));
+        waitForFxEvents();
+
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+        waitForFxEvents();
+
+        clickOn(offset(canvasNode, 16.0, 16.0));
+        waitForFxEvents();
 
         clickOn(saveNode);
         waitForFxEvents();
 
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
-
-        // TODO(Derppening): Match behavior with sample JAR
 
         type(KeyCode.ENTER);
     }

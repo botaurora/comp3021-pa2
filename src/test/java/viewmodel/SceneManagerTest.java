@@ -49,8 +49,6 @@ public class SceneManagerTest extends ApplicationTest {
         waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelSelectPane);
-
-        // TODO(Derppening): Click return and assert
     }
 
     /**
@@ -62,8 +60,6 @@ public class SceneManagerTest extends ApplicationTest {
         waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof LevelEditorPane);
-
-        // TODO(Derppening): Click return and assert
     }
 
     /**
@@ -75,7 +71,5 @@ public class SceneManagerTest extends ApplicationTest {
         waitForFxEvents();
 
         assertTrue(SceneManager.getInstance().getStage().getScene().getRoot() instanceof SettingsPane);
-
-        // TODO(Derppening): Click return and assert
     }
 }

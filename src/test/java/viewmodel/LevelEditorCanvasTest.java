@@ -10,9 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
@@ -45,7 +41,6 @@ public class LevelEditorCanvasTest extends ApplicationTest {
     private Node rowBoxNode;
     private Node colBoxNode;
     private Node newGridNode;
-    private Node saveNode;
     private Node canvasNode;
 
     /**
@@ -79,10 +74,6 @@ public class LevelEditorCanvasTest extends ApplicationTest {
                 .orElseThrow(PropertyNotFoundException::new);
         newGridNode = ((VBox) leftVBoxNode).getChildrenUnmodifiable().stream()
                 .filter(it -> it instanceof Button && ((Button) it).getText().equals("New Grid"))
-                .findFirst()
-                .orElseThrow(PropertyNotFoundException::new);
-        saveNode = ((VBox) leftVBoxNode).getChildrenUnmodifiable().stream()
-                .filter(it -> it instanceof Button && ((Button) it).getText().equals("Save"))
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
         canvasNode = ((VBox) centerVBoxNode).getChildrenUnmodifiable().stream()
