@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/Derppening/comp3021-pa2.svg?token=ECC8n6hE7n7DN6DCCDMi&branch=master)](https://travis-ci.com/Derppening/comp3021-pa2)
 
+[View Javadocs](https://derppening.github.io/comp3021-pa2/docs/)
+
 In PA2, you will be implementing a GUI version of the Sokoban game from PA1. The core logic of the game remains more or less the same, but there are some differences that you should be aware of.
 
 ## Changes from PA1

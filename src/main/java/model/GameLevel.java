@@ -36,6 +36,7 @@ public class GameLevel {
      *
      * @param filename the map text filename
      * @throws InvalidMapException when the map is invalid
+     * @throws FileNotFoundException if the file cannot be found
      */
     public void loadMap(String filename) throws FileNotFoundException, InvalidMapException {
         File f = new File(filename);

@@ -16,6 +16,7 @@ repositories {
 plugins {
     application
     java
+    jacoco
     id("com.github.johnrengelman.shadow") version "4.0.3"
 }
 
@@ -68,6 +69,18 @@ tasks {
                 this["Implementation-Title"] = "PA2"
                 this["Main-Class"] = application.mainClassName
             }
+        }
+    }
+
+    getByName<Javadoc>("javadoc") {
+        setDestinationDir(File("$projectDir/docs"))
+    }
+
+    getByName<JacocoReport>("jacocoTestReport") {
+        reports {
+            xml.isEnabled = false
+            csv.isEnabled = false
+            html.destination = File("$buildDir/jacocoHTML")
         }
     }
 }
