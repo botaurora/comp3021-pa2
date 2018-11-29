@@ -12,7 +12,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.LevelManager;
-import model.Map.Cell;
 import model.Map.Map;
 import model.Map.Occupant.Crate;
 import model.Map.Occupant.Player;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
@@ -59,7 +57,7 @@ public class BonusTaskTest extends ApplicationTest {
 
     private LevelManager levelManager;
 
-    private static final KeyCode[] WIN_MAP1_MOVES = {
+    private static final KeyCode[] MAP1_WIN_MOVES = {
             KeyCode.A,
             KeyCode.A,
             KeyCode.D,
@@ -73,14 +71,14 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
-    private static final KeyCode[] DEADLOCK_MAP2_MOVES = {
+    private static final KeyCode[] MAP2_DEADLOCK_MOVES = {
             KeyCode.A,
             KeyCode.W,
             KeyCode.A,
             KeyCode.S
     };
 
-    private static final KeyCode[] WIN_MAP3_MOVES = {
+    private static final KeyCode[] MAP3_WIN_MOVES = {
             KeyCode.S,
             KeyCode.D,
             KeyCode.S,
@@ -118,7 +116,7 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
-    private static final KeyCode[] WIN_MAP4_MOVES = {
+    private static final KeyCode[] MAP4_WIN_MOVES = {
             KeyCode.S,
             KeyCode.D,
             KeyCode.D,
@@ -170,7 +168,7 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.A
     };
 
-    private static final KeyCode[] DEADLOCK_MAP5_MOVES = {
+    private static final KeyCode[] MAP5_DEADLOCK_MOVES = {
             KeyCode.D,
             KeyCode.D,
             KeyCode.D,
@@ -294,7 +292,7 @@ public class BonusTaskTest extends ApplicationTest {
             fail();
         }
 
-        type(WIN_MAP1_MOVES);
+        type(MAP1_WIN_MOVES);
         waitForFxEvents();
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -376,7 +374,7 @@ public class BonusTaskTest extends ApplicationTest {
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
-        type(DEADLOCK_MAP2_MOVES);
+        type(MAP2_DEADLOCK_MOVES);
         waitForFxEvents();
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -573,7 +571,7 @@ public class BonusTaskTest extends ApplicationTest {
 
             Class<?> gpInfoClazz = GameplayInfoPane.class;
 
-            type(WIN_MAP3_MOVES);
+            type(MAP3_WIN_MOVES);
             waitForFxEvents();
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -619,7 +617,7 @@ public class BonusTaskTest extends ApplicationTest {
                 fail();
             }
 
-            type(WIN_MAP4_MOVES);
+            type(MAP4_WIN_MOVES);
             waitForFxEvents();
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -670,7 +668,7 @@ public class BonusTaskTest extends ApplicationTest {
 
             Class<?> gpInfoClazz = GameplayInfoPane.class;
 
-            type(WIN_MAP4_MOVES);
+            type(MAP4_WIN_MOVES);
             waitForFxEvents();
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
@@ -716,7 +714,7 @@ public class BonusTaskTest extends ApplicationTest {
                 fail();
             }
 
-            type(DEADLOCK_MAP5_MOVES);
+            type(MAP5_DEADLOCK_MOVES);
             waitForFxEvents();
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
