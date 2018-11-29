@@ -379,6 +379,12 @@ public class BonusTaskTest extends ApplicationTest {
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
+
+        if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
+            System.out.println("CI environment detected: Skipping dialog");
+        } else {
+            type(KeyCode.SPACE);
+        }
     }
 
     @Test

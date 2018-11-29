@@ -256,7 +256,7 @@ public class GameplayPane extends BorderPane {
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 System.out.println("This is normal in CI environment");
             } else {
-                System.err.println("Should be an impossible!");
+                System.err.println("Should be impossible!");
             }
         } else if (result.get().getText().equals("Return")) {
             doReturnToLevelSelectMenu();
