@@ -25,8 +25,7 @@ import viewmodel.customNodes.GameplayInfoPane;
 import viewmodel.panes.GameplayPane;
 import viewmodel.panes.LevelSelectPane;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,7 +41,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
+/**
+ * Test cases for all implemented bonus tasks.
+ */
 public class BonusTaskTest extends ApplicationTest {
+    /**
+     * Keycode sequence for winning 01-easy.txt.
+     */
     private static final KeyCode[] MAP1_WIN_MOVES = {
             KeyCode.A,
             KeyCode.A,
@@ -57,6 +62,9 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
+    /**
+     * Keycode sequence for deadlocking 02-easy.txt.
+     */
     private static final KeyCode[] MAP2_DEADLOCK_MOVES = {
             KeyCode.A,
             KeyCode.W,
@@ -64,6 +72,9 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
+    /**
+     * Keycode sequence for winning 03-easy.txt.
+     */
     private static final KeyCode[] MAP3_WIN_MOVES = {
             KeyCode.S,
             KeyCode.D,
@@ -102,6 +113,9 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
+    /**
+     * Keycode sequence for winning 04-easy.txt.
+     */
     private static final KeyCode[] MAP4_WIN_MOVES = {
             KeyCode.S,
             KeyCode.D,
@@ -154,6 +168,9 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.A
     };
 
+    /**
+     * Keycode sequence for deadlocking 05-normal.txt.
+     */
     private static final KeyCode[] MAP5_DEADLOCK_MOVES = {
             KeyCode.D,
             KeyCode.D,
@@ -170,6 +187,9 @@ public class BonusTaskTest extends ApplicationTest {
 
     private LevelManager levelManager;
 
+    /**
+     * Cached path to the directory containing all maps.
+     */
     private Path mapsPath;
 
     {
@@ -182,6 +202,10 @@ public class BonusTaskTest extends ApplicationTest {
         }
     }
 
+    /**
+     * Caches the current instance of {@link LevelManager}, and loads all maps from
+     * {@link BonusTaskTest#mapsPath}.
+     */
     @BeforeEach
     void setupEach() {
         levelManager = LevelManager.getInstance();
@@ -210,10 +234,14 @@ public class BonusTaskTest extends ApplicationTest {
         }
     }
 
+    /**
+     * Resets {@code System.out} and {@code System.err} to the original location, and restores all maps
+     * to the original directory.
+     */
     @AfterEach
     void cleanupEach() {
-        System.setOut(System.out);
-        System.setErr(System.err);
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
 
         try {
             Files.walk(Paths.get(mapsPath.getParent().toString()), 1)
@@ -231,6 +259,11 @@ public class BonusTaskTest extends ApplicationTest {
         }
     }
 
+    /**
+     * Displays the level selection scene.
+     *
+     * @param stage Primary stage of the application.
+     */
     @Override
     @Start
     public void start(Stage stage) {
@@ -253,6 +286,18 @@ public class BonusTaskTest extends ApplicationTest {
                         .orElse(null));
     }
 
+    /**
+     * <p>Tests for implementation of Bonus Task 1.</p>
+     *
+     * <ul>
+     * <li>Load the maps from the “maps” folder</li>
+     * <li>Select 01-easy.txt and start playing</li>
+     * <li>Delete 02-easy.txt</li>
+     * <li>Win 01-easy and go to the next level</li>
+     * <li>The game should popup a dialog warning that 02-easy is missing</li>
+     * <li>The game should then load 03-easy.txt</li>
+     * </ul>
+     */
     @Test
     void testBonusTask1() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -348,6 +393,15 @@ public class BonusTaskTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for implementation of Bonus Task 3.</p>
+     *
+     * <ul>
+     * <li>Start a game</li>
+     * <li>Push one crate to a non-destination location where the crate cannot be further moved</li>
+     * <li>The game should report a deadlock</li>
+     * </ul>
+     */
     @Test
     void testBonusTask3() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -389,6 +443,17 @@ public class BonusTaskTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for implementation of Bonus Task 4.</p>
+     *
+     * <ul>
+     * <li>Prepare a folder containing invalid maps such as random text files</li>
+     * <li>Start the game and let the game load the folder</li>
+     * <li>Select an invalid map</li>
+     * <li>An alert should popup and warns that this is an invalid map</li>
+     * <li>The map should be removed from the list</li>
+     * </ul>
+     */
     @Test
     void testBonusTask4() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -421,6 +486,17 @@ public class BonusTaskTest extends ApplicationTest {
         assertEquals(0, listView.getItems().filtered(it -> it.equals("00-invalid.txt")).size());
     }
 
+    /**
+     * <p>Tests for implementation of Bonus Task 5.</p>
+     *
+     * <ul>
+     * <li>Start a game</li>
+     * <li>Make some moves</li>
+     * <li>Click undo once and it should undo one move</li>
+     * <li>Make some moves</li>
+     * <li>Click undo until it goes back to the initial state of the game</li>
+     * </ul>
+     */
     @Test
     void testBonusTask5() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -535,6 +611,29 @@ public class BonusTaskTest extends ApplicationTest {
         assertTrue(levelManager.getGameLevel().getMap().getCrates().stream().allMatch(it -> initialCrates.stream().anyMatch(c -> it.getR() == c.getR() && it.getC() == c.getC())));
     }
 
+    /**
+     * <p>Tests for implementation of Bonus Task 7.</p>
+     *
+     * <ul>
+     * <li>On Level Select screen, choose /assets/maps/ as the Map Directory and choose "03-easy.txt" to
+     * play.</li>
+     * <li>Play the game to clear "03-easy.txt" level.</li>
+     * <li>When the level clear pop-up appears, choose "Next level" to go to "04-easy.txt" map.</li>
+     * <li>Play the game to clear “04-easy.txt” level.</li>
+     * <li>When the level clear pop-up appears, choose “Return”.</li>
+     * <li>Now the program should return to Level Select screen, while the level "04-easy.txt" is
+     * highlighted in the ListView and rendered on the previewing Canvas.</li>
+     * <li>Click on "Play" to play "04-easy.txt". The program should go to the Gameplay screen where its
+     * user can play “04-easy.txt”.</li>
+     * <li>Play the game to clear this level again.</li>
+     * <li>When the level clear pop-up appears this time, choose "Next level" to go to "05-normal.txt"
+     * map.</li>
+     * <li>Play the game but make moves to get the game deadlocked.</li>
+     * <li>When the level deadlocked pop-up appears, choose "Return".</li>
+     * <li>Now the program should return to Level Select screen, while the level "05-normal.txt" is
+     * highlighted in the ListView and rendered on the previewing Canvas.</li>
+     * </ul>
+     */
     @Test
     void testBonusTask7() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();

@@ -28,9 +28,7 @@ import viewmodel.customNodes.GameplayInfoPane;
 import viewmodel.panes.GameplayPane;
 import viewmodel.panes.LevelSelectPane;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -215,10 +213,13 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
     }
 
+    /**
+     * Resets {@code System.out} and {@code System.err} to the original location.
+     */
     @AfterEach
     void cleanupEach() {
-        System.setOut(System.out);
-        System.setErr(System.err);
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
     }
 
     @Override
@@ -309,7 +310,8 @@ public class PlayingTheGameTest extends ApplicationTest {
     /**
      * <p>Tests for Condition 1:</p>
      *
-     * <p>Click `Choose map directory`, but cancel without selecting a directory, and ensure program has no errors</p>
+     * <p>Click `Choose map directory`, but cancel without selecting a directory, and ensure program has
+     * no errors</p>
      */
     @Test
     void testCancelDirectorySelection() {
@@ -341,13 +343,27 @@ public class PlayingTheGameTest extends ApplicationTest {
     /**
      * <p>Tests for Condition 2:</p>
      *
-     * <p>Click `Choose map directory`, and choose the map directory. Ensure the maps are loaded into the list view</p>
+     * <p>Click `Choose map directory`, and choose the map directory. Ensure the maps are loaded into the
+     * list view</p>
      */
     @Test
     void testSelectMapDirectory() {
         loadDefaultMapDirectory();
     }
 
+    /**
+     * <p>Tests for Condition 4.1:</p>
+     *
+     * <p>Move around a few times, and ensure the following:</p>
+     * <ul>
+     * <li>Level name is correct</li>
+     * <li>Timer is working correctly</li>
+     * <li>Moves counter is working correctly</li>
+     * <li>The map elements are updated correctly in accordance with user input</li>
+     * <li>The move sound is played (Not tested here)</li>
+     * <li>You cannot push crates into walls, or two crates at once</li>
+     * </ul>
+     */
     @Test
     void testBasicGameParameters() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -471,6 +487,17 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for Condition 4.2:</p>
+     *
+     * <p>Restart the game, and ensure:</p>
+     * <ul>
+     * <li>The map has been reset</li>
+     * <li>The timer has been reset and is functioning normally</li>
+     * <li>The moves counter has been reset</li>
+     * <li>The number of restarts has been incremented</li>
+     * </ul>
+     */
     @Test
     void testGameRestart() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -558,6 +585,16 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for Condition 4.3:</p>
+     *
+     * <p>Deadlock the level, and ensure:</p>
+     * <ul>
+     * <li>The deadlock popup shows</li>
+     * <li>The deadlock sound is played (Not tested here)</li>
+     * <li>The restart option works as described above</li>
+     * </ul>
+     */
     @Test
     void testGameDeadlock() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -613,7 +650,6 @@ public class PlayingTheGameTest extends ApplicationTest {
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
-            // Alert.showAndWait will fail in Travis CI. skip it
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doRestartAction");
                 m.setAccessible(true);
@@ -668,6 +704,21 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for Condition 4.4.1:</p>
+     *
+     * <p>Win the level, and ensure</p>
+     * <ul>
+     * <li>The level clear popup shows</li>
+     * <li>Click Next Level, and ensure:</li>
+     * <ul>
+     * <li>The map has been reset</li>
+     * <li>The timer has been reset and is functioning normally</li>
+     * <li>The moves counter has been reset</li>
+     * <li>The number of restarts has been reset</li>
+     * </ul>
+     * </ul>
+     */
     @Test
     void testGameWinNextLevel() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -752,6 +803,19 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
     }
 
+    /**
+     * <p>Tests for Condition 4.4.2:</p>
+     *
+     * <p>Win the level, and ensure</p>
+     * <ul>
+     * <li>The level clear popup shows</li>
+     * <li>Click Quit to Menu, and ensure:</li>
+     * <ul>
+     * <li>A popup shows, asking if you're sure about returning to the menu</li>
+     * <li>Clicking OK brings you back to the menu</li>
+     * </ul>
+     * </ul>
+     */
     @Test
     void testGameWinQuit() {
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -788,7 +852,6 @@ public class PlayingTheGameTest extends ApplicationTest {
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        // Alert.showAndWait will fail in Travis CI. skip it
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             try {
                 Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doReturnToLevelSelectMenu");

@@ -73,6 +73,12 @@ public class GameLevel {
         return map.getCrates().parallelStream().anyMatch(c -> !isCrateOnDestTile(c) && !isCrateMovable(c)) && !isWin();
     }
 
+    /**
+     * Checks whether a crate is on any destination tile.
+     *
+     * @param c Crate to check.
+     * @return True if crate is on a destination tile.
+     */
     private boolean isCrateOnDestTile(Crate c) {
         return map.getDestTiles().parallelStream().anyMatch(dt -> dt.getOccupant().orElse(null) == c);
     }

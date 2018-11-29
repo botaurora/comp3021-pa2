@@ -26,7 +26,13 @@ public class Map {
 
     private History states = new History();
 
+    /**
+     * Helper class for storing history of moves.
+     */
     public class History {
+        /**
+         * Represents a single move state. Stores the difference between previous state and current state.
+         */
         private class State {
             private Direction playerDir;
             private final List<Crate> crates = new ArrayList<>();
@@ -34,6 +40,11 @@ public class Map {
 
         private Stack<State> states = new Stack<>();
 
+        /**
+         * Saves a state into the history.
+         *
+         * @param d Direction of the player.
+         */
         public void save(Direction d) {
             State s = new State();
             s.playerDir = d;
@@ -41,10 +52,16 @@ public class Map {
             states.push(s);
         }
 
+        /**
+         * Removes a state from the history.
+         */
         public void pop() {
             states.pop();
         }
 
+        /**
+         * Removes a state from the history, and restore the map to the previous state.
+         */
         public void restore() {
             State s = states.pop();
             ((Occupiable) cells[player.getR()][player.getC()]).removeOccupant();
@@ -71,10 +88,16 @@ public class Map {
             crates.forEach(c -> ((Occupiable) cells[c.getR()][c.getC()]).setOccupant(c));
         }
 
+        /**
+         * @return Whether the history is empty.
+         */
         public boolean isEmpty() {
             return states.empty();
         }
 
+        /**
+         * Clears all entries in the history.
+         */
         public void clear() {
             states.clear();
         }
@@ -169,6 +192,9 @@ public class Map {
         return cells;
     }
 
+    /**
+     * @return Entire history of moves made in this map.
+     */
     public History getHistory() {
         return states;
     }

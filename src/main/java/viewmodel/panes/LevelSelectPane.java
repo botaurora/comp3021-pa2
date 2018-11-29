@@ -63,6 +63,9 @@ public class LevelSelectPane extends BorderPane {
         }
     }
 
+    /**
+     * Updates the highlighted level in {@link LevelSelectPane#levelsListView}.
+     */
     public void updateHighlightedLevel() {
         String currentLevel = LevelManager.getInstance().currentLevelNameProperty().get();
 

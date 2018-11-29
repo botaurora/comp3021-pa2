@@ -22,15 +22,15 @@ import static viewmodel.Config.LEVEL_EDITOR_TILE_SIZE;
  * Renders maps onto canvases
  */
 public class MapRenderer {
-    private static Image wall = null;
-    private static Image crateOnTile = null;
-    private static Image crateOnDest = null;
+    private static Image wall;
+    private static Image crateOnTile;
+    private static Image crateOnDest;
 
-    private static Image playerOnTile = null;
-    private static Image playerOnDest = null;
+    private static Image playerOnTile;
+    private static Image playerOnDest;
 
-    private static Image dest = null;
-    private static Image tile = null;
+    private static Image dest;
+    private static Image tile;
 
     static {
         try {
@@ -65,6 +65,9 @@ public class MapRenderer {
         }
     }
 
+    /**
+     * Helper class representing a set of images.
+     */
     private static class TileImageMapping {
         private Image tile;
         private Image tileWithCrate;
@@ -82,10 +85,17 @@ public class MapRenderer {
         }
     }
 
+    /**
+     * Map of tiles to their different images, representing tiles with different occupants.
+     */
     private final static Map<Class<? extends Tile>, TileImageMapping> IMAGE_MAPPING = new HashMap<Class<? extends Tile>, TileImageMapping>() {{
         put(Tile.class, new TileImageMapping(tile, crateOnTile, playerOnTile));
         put(DestTile.class, new TileImageMapping(dest, crateOnDest, playerOnDest));
     }};
+
+    /**
+     * Map of a {@link LevelEditorCanvas.Brush} to its corresponding image.
+     */
     private final static Map<LevelEditorCanvas.Brush, Image> BRUSH_IMAGE_MAP = new HashMap<LevelEditorCanvas.Brush, Image>() {{
         put(LevelEditorCanvas.Brush.CRATE_ON_DEST, crateOnDest);
         put(LevelEditorCanvas.Brush.CRATE_ON_TILE, crateOnTile);

@@ -189,6 +189,9 @@ public class GameplayPane extends BorderPane {
         }
     }
 
+    /**
+     * Helper method for quitting to the main menu.
+     */
     private void doQuitToMainMenu() {
         LevelManager manager = LevelManager.getInstance();
         manager.resetLevelTimer();
@@ -265,11 +268,17 @@ public class GameplayPane extends BorderPane {
         }
     }
 
+    /**
+     * Helper method for quitting to level select.
+     */
     private void doReturnToLevelSelectMenu() {
         SceneManager.getInstance().showLevelSelectMenuScene();
         LevelManager.getInstance().resetNumRestarts();
     }
 
+    /**
+     * Helper method for loading the next level.
+     */
     private void doLoadNextLevel() {
         String nextLevel = "";
         while (nextLevel != null) {
