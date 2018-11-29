@@ -377,7 +377,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        type(KeyCode.ENTER);
+        type(KeyCode.SPACE);
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_DEST);
         waitForFxEvents();
@@ -409,7 +409,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        type(KeyCode.ENTER);
+        type(KeyCode.SPACE);
         waitForFxEvents();
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.TILE);
@@ -424,27 +424,27 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        type(KeyCode.ENTER);
+        type(KeyCode.SPACE);
         waitForFxEvents();
 
-        setBoardSize(2, 2);
+        setBoardSize(1, 3);
 
-        listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
 
-        clickOn(offset(canvasNode, -16.0, -16.0));
+        clickOn(offset(canvasNode, -32.0, 0.0));
         waitForFxEvents();
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_TILE);
         waitForFxEvents();
 
-        clickOn(offset(canvasNode, 16.0, -16.0));
+        clickOn(offset(canvasNode, 0.0, 0.0));
         waitForFxEvents();
 
-        listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
         waitForFxEvents();
 
-        clickOn(offset(canvasNode, 16.0, 16.0));
+        clickOn(offset(canvasNode, 32.0, 0.0));
         waitForFxEvents();
 
         clickOn(saveNode);
@@ -453,6 +453,6 @@ public class CreatingNewMapsTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        type(KeyCode.ENTER);
+        type(KeyCode.SPACE);
     }
 }
