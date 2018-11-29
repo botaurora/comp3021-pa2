@@ -158,14 +158,12 @@ public class GameplayPane extends BorderPane {
                     audio.playWinSound();
                 }
 
-                lvl.resetLevelTimer();
                 createLevelClearPopup();
             } else if (lvl.getGameLevel().isDeadlocked()) {
                 if (audio.isEnabled()) {
                     audio.playDeadlockSound();
                 }
 
-                lvl.resetLevelTimer();
                 createDeadlockedPopup();
             }
         });
