@@ -1,3 +1,5 @@
+package viewmodel;
+
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;

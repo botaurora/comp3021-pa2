@@ -416,7 +416,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
         type(KeyCode.ENTER);
         waitForFxEvents();
 
-        listView.getSelectionModel().select(LevelEditorCanvas.Brush.DEST);
+        listView.getSelectionModel().select(LevelEditorCanvas.Brush.TILE);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, -16.0, -16.0));
@@ -433,7 +433,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
         type(KeyCode.ENTER);
         waitForFxEvents();
 
-        setBoardSize(3, 3);
+        setBoardSize(2, 2);
 
         clickOn(saveNode);
         waitForFxEvents();
