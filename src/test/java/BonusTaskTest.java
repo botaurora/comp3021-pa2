@@ -290,7 +290,7 @@ public class BonusTaskTest extends ApplicationTest {
      * <p>Tests for implementation of Bonus Task 1.</p>
      *
      * <ul>
-     * <li>Load the maps from the “maps” folder</li>
+     * <li>Load the maps from the "maps" folder</li>
      * <li>Select 01-easy.txt and start playing</li>
      * <li>Delete 02-easy.txt</li>
      * <li>Win 01-easy and go to the next level</li>
@@ -619,12 +619,12 @@ public class BonusTaskTest extends ApplicationTest {
      * play.</li>
      * <li>Play the game to clear "03-easy.txt" level.</li>
      * <li>When the level clear pop-up appears, choose "Next level" to go to "04-easy.txt" map.</li>
-     * <li>Play the game to clear “04-easy.txt” level.</li>
-     * <li>When the level clear pop-up appears, choose “Return”.</li>
+     * <li>Play the game to clear "04-easy.txt" level.</li>
+     * <li>When the level clear pop-up appears, choose "Return".</li>
      * <li>Now the program should return to Level Select screen, while the level "04-easy.txt" is
      * highlighted in the ListView and rendered on the previewing Canvas.</li>
      * <li>Click on "Play" to play "04-easy.txt". The program should go to the Gameplay screen where its
-     * user can play “04-easy.txt”.</li>
+     * user can play "04-easy.txt".</li>
      * <li>Play the game to clear this level again.</li>
      * <li>When the level clear pop-up appears this time, choose "Next level" to go to "05-normal.txt"
      * map.</li>
