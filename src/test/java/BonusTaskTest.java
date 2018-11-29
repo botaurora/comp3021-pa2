@@ -324,7 +324,7 @@ public class BonusTaskTest extends ApplicationTest {
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
-        Platform.runLater(() -> getTopModalStage().get().close());
+        Platform.runLater(() -> getTopModalStage().ifPresent(Stage::close));
         waitForFxEvents();
 
         Class<?> clazz = GameplayInfoPane.class;
@@ -408,7 +408,7 @@ public class BonusTaskTest extends ApplicationTest {
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
 
-            Platform.runLater(() -> getTopModalStage().get().close());
+            Platform.runLater(() -> getTopModalStage().ifPresent(Stage::close));
             waitForFxEvents();
         }
 
