@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -153,43 +154,52 @@ public class LevelEditorCanvas extends Canvas {
 
         File f = getTargetSaveDirectory();
         if (f != null) {
-            try {
-                if (f.exists()) {
-                    f.delete();
-                }
+            exportToFile(f);
+        }
+    }
 
-                if (!f.createNewFile()) {
-                    System.err.println("Unable to create new file!");
-                    return;
-                }
-
-                try (BufferedWriter bf  = new BufferedWriter(new PrintWriter(f))) {
-                    bf.write(Integer.valueOf(rows).toString());
-                    bf.newLine();
-                    bf.write(Integer.valueOf(cols).toString());
-                    bf.newLine();
-
-                    for (int i = 0; i < rows; ++i) {
-                        Arrays.stream(map[i]).map(Brush::getRep).forEachOrdered(it -> {
-                            try {
-                                bf.write(it);
-                            } catch (IOException e) {
-                                System.err.println("Unable to write data!");
-                                e.printStackTrace();
-
-                                if (!f.delete()) {
-                                    System.err.println("Unable to delete file!");
-                                }
-                            }
-                        });
-
-                        bf.newLine();
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("Unable to write data!");
-                e.printStackTrace();
+    /**
+     * Exports the current game canvas to a text file.
+     *
+     * @param f File to export to.
+     */
+    private void exportToFile(@NotNull File f) {
+        try {
+            if (f.exists()) {
+                f.delete();
             }
+
+            if (!f.createNewFile()) {
+                System.err.println("Unable to create new file!");
+                return;
+            }
+
+            try (BufferedWriter bf  = new BufferedWriter(new PrintWriter(f))) {
+                bf.write(Integer.valueOf(rows).toString());
+                bf.newLine();
+                bf.write(Integer.valueOf(cols).toString());
+                bf.newLine();
+
+                for (int i = 0; i < rows; ++i) {
+                    Arrays.stream(map[i]).map(Brush::getRep).forEachOrdered(it -> {
+                        try {
+                            bf.write(it);
+                        } catch (IOException e) {
+                            System.err.println("Unable to write data!");
+                            e.printStackTrace();
+
+                            if (!f.delete()) {
+                                System.err.println("Unable to delete file!");
+                            }
+                        }
+                    });
+
+                    bf.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Unable to write data!");
+            e.printStackTrace();
         }
     }
 
