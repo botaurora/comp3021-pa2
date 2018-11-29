@@ -1,14 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins", "shadow")
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -17,7 +6,6 @@ plugins {
     application
     java
     jacoco
-    id("com.github.johnrengelman.shadow") version "4.0.3"
 }
 
 application {
@@ -61,15 +49,6 @@ tasks {
     getByName<Wrapper>("wrapper") {
         gradleVersion = "5.0"
         distributionType = Wrapper.DistributionType.ALL
-    }
-
-    getByName<ShadowJar>("shadowJar") {
-        manifest {
-            attributes.apply {
-                this["Implementation-Title"] = "PA2"
-                this["Main-Class"] = application.mainClassName
-            }
-        }
     }
 
     getByName<Javadoc>("javadoc") {
