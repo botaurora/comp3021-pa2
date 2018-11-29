@@ -43,20 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
 
 public class BonusTaskTest extends ApplicationTest {
-    private Path mapsPath;
-
-    {
-        try {
-            Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
-            mapsPath = path.getParent().toAbsolutePath();
-        } catch (URISyntaxException e) {
-            mapsPath = null;
-            fail();
-        }
-    }
-
-    private LevelManager levelManager;
-
     private static final KeyCode[] MAP1_WIN_MOVES = {
             KeyCode.A,
             KeyCode.A,
@@ -177,6 +163,25 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S
     };
 
+    private static final Class<?> MAP_CLAZZ = Map.class;
+    private static final Class<?> LEVEL_SELECT_CLAZZ = LevelSelectPane.class;
+    private static final Class<?> GAMEPLAY_CLAZZ = GameplayPane.class;
+    private static final Class<?> GAMEPLAY_INFO_CLAZZ = GameplayInfoPane.class;
+
+    private LevelManager levelManager;
+
+    private Path mapsPath;
+
+    {
+        try {
+            Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
+            mapsPath = path.getParent().toAbsolutePath();
+        } catch (URISyntaxException e) {
+            mapsPath = null;
+            fail();
+        }
+    }
+
     @BeforeEach
     void setupEach() {
         levelManager = LevelManager.getInstance();
@@ -185,8 +190,7 @@ public class BonusTaskTest extends ApplicationTest {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().toAbsolutePath();
 
-            Class<?> clazz = LevelSelectPane.class;
-            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            Method m = LEVEL_SELECT_CLAZZ.getDeclaredMethod("commitMapDirectoryChange", File.class);
             m.setAccessible(true);
 
             Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -299,9 +303,8 @@ public class BonusTaskTest extends ApplicationTest {
         assertNotNull(dialog);
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            Class<?> gpClazz = GameplayPane.class;
             try {
-                Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
+                Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doLoadNextLevel");
                 m.setAccessible(true);
 
                 Platform.runLater(() -> {
@@ -325,12 +328,11 @@ public class BonusTaskTest extends ApplicationTest {
         Platform.runLater(() -> getTopModalStage().ifPresent(Stage::close));
         waitForFxEvents();
 
-        Class<?> clazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = clazz.getDeclaredField("levelNameLabel");
-            Field timerField = clazz.getDeclaredField("timerLabel");
-            Field numMovesField = clazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = clazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+            Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+            Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+            Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
@@ -458,8 +460,7 @@ public class BonusTaskTest extends ApplicationTest {
 
         Player initialPlayer = null;
         try {
-            Class<?> clazz = Map.class;
-            Field f = clazz.getDeclaredField("player");
+            Field f = MAP_CLAZZ.getDeclaredField("player");
             f.setAccessible(true);
 
             Player p = ((Player) f.get(levelManager.getGameLevel().getMap()));
@@ -475,8 +476,7 @@ public class BonusTaskTest extends ApplicationTest {
 
         Player player = null;
         try {
-            Class<?> clazz = Map.class;
-            Field f = clazz.getDeclaredField("player");
+            Field f = MAP_CLAZZ.getDeclaredField("player");
             f.setAccessible(true);
 
             Player p = ((Player) f.get(levelManager.getGameLevel().getMap()));
@@ -494,8 +494,7 @@ public class BonusTaskTest extends ApplicationTest {
         waitForFxEvents();
 
         try {
-            Class<?> clazz = Map.class;
-            Field f = clazz.getDeclaredField("player");
+            Field f = MAP_CLAZZ.getDeclaredField("player");
             f.setAccessible(true);
 
             Player p = ((Player) f.get(levelManager.getGameLevel().getMap()));
@@ -522,8 +521,7 @@ public class BonusTaskTest extends ApplicationTest {
         }
 
         try {
-            Class<?> clazz = Map.class;
-            Field f = clazz.getDeclaredField("player");
+            Field f = MAP_CLAZZ.getDeclaredField("player");
             f.setAccessible(true);
 
             Player p = ((Player) f.get(levelManager.getGameLevel().getMap()));
@@ -575,8 +573,6 @@ public class BonusTaskTest extends ApplicationTest {
                     .orElseThrow(PropertyNotFoundException::new);
             GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-            Class<?> gpInfoClazz = GameplayInfoPane.class;
-
             type(MAP3_WIN_MOVES);
             waitForFxEvents();
 
@@ -584,9 +580,8 @@ public class BonusTaskTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Class<?> gpClazz = GameplayPane.class;
                 try {
-                    Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
+                    Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doLoadNextLevel");
                     m.setAccessible(true);
 
                     Platform.runLater(() -> {
@@ -605,10 +600,10 @@ public class BonusTaskTest extends ApplicationTest {
             waitForFxEvents();
 
             try {
-                Field levelNameField = gpInfoClazz.getDeclaredField("levelNameLabel");
-                Field timerField = gpInfoClazz.getDeclaredField("timerLabel");
-                Field numMovesField = gpInfoClazz.getDeclaredField("numMovesLabel");
-                Field numRestartsField = gpInfoClazz.getDeclaredField("numRestartsLabel");
+                Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+                Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+                Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+                Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
                 levelNameField.setAccessible(true);
                 timerField.setAccessible(true);
@@ -630,9 +625,8 @@ public class BonusTaskTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Class<?> gpClazz = GameplayPane.class;
                 try {
-                    Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                    Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doReturnToLevelSelectMenu");
                     m.setAccessible(true);
 
                     Platform.runLater(() -> {
@@ -672,8 +666,6 @@ public class BonusTaskTest extends ApplicationTest {
                     .orElseThrow(PropertyNotFoundException::new);
             GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-            Class<?> gpInfoClazz = GameplayInfoPane.class;
-
             type(MAP4_WIN_MOVES);
             waitForFxEvents();
 
@@ -681,9 +673,8 @@ public class BonusTaskTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Class<?> gpClazz = GameplayPane.class;
                 try {
-                    Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
+                    Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doLoadNextLevel");
                     m.setAccessible(true);
 
                     Platform.runLater(() -> {
@@ -702,10 +693,10 @@ public class BonusTaskTest extends ApplicationTest {
             waitForFxEvents();
 
             try {
-                Field levelNameField = gpInfoClazz.getDeclaredField("levelNameLabel");
-                Field timerField = gpInfoClazz.getDeclaredField("timerLabel");
-                Field numMovesField = gpInfoClazz.getDeclaredField("numMovesLabel");
-                Field numRestartsField = gpInfoClazz.getDeclaredField("numRestartsLabel");
+                Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+                Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+                Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+                Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
                 levelNameField.setAccessible(true);
                 timerField.setAccessible(true);
@@ -727,9 +718,8 @@ public class BonusTaskTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Class<?> gpClazz = GameplayPane.class;
                 try {
-                    Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                    Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doReturnToLevelSelectMenu");
                     m.setAccessible(true);
 
                     Platform.runLater(() -> {

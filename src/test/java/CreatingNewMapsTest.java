@@ -35,6 +35,8 @@ import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
  * Test cases for all conditions as specified by Compulsory Demo Tasks, Creating New Maps section.
  */
 public class CreatingNewMapsTest extends ApplicationTest {
+    private static final Class<?> LEVEL_EDITOR_CANVAS_CLAZZ = LevelEditorCanvas.class;
+
     private Node listViewNode;
     private Node rowBoxNode;
     private Node colBoxNode;
@@ -242,9 +244,8 @@ public class CreatingNewMapsTest extends ApplicationTest {
         clickOn(offset(canvasNode, 64.0, 64.0));
         waitForFxEvents();
 
-        Class<?> clazz = LevelEditorCanvas.class;
         try {
-            final Field mapField = clazz.getDeclaredField("map");
+            final Field mapField = LEVEL_EDITOR_CANVAS_CLAZZ.getDeclaredField("map");
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
@@ -295,9 +296,8 @@ public class CreatingNewMapsTest extends ApplicationTest {
 
         setBoardSize(4, 4);
 
-        Class<?> clazz = LevelEditorCanvas.class;
         try {
-            final Field mapField = clazz.getDeclaredField("map");
+            final Field mapField = LEVEL_EDITOR_CANVAS_CLAZZ.getDeclaredField("map");
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
@@ -339,9 +339,8 @@ public class CreatingNewMapsTest extends ApplicationTest {
         clickOn(offset(canvasNode, 48.0, 48.0));
         waitForFxEvents();
 
-        Class<?> clazz = LevelEditorCanvas.class;
         try {
-            final Field mapField = clazz.getDeclaredField("map");
+            final Field mapField = LEVEL_EDITOR_CANVAS_CLAZZ.getDeclaredField("map");
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 

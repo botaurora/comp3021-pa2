@@ -181,6 +181,10 @@ public class PlayingTheGameTest extends ApplicationTest {
             KeyCode.W
     };
 
+    private static final Class<?> LEVEL_SELECT_CLAZZ = LevelSelectPane.class;
+    private static final Class<?> GAMEPLAY_CLAZZ = GameplayPane.class;
+    private static final Class<?> GAMEPLAY_INFO_CLAZZ = GameplayInfoPane.class;
+
     private LevelManager levelManager;
 
     @BeforeEach
@@ -191,8 +195,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().toAbsolutePath();
 
-            Class<?> clazz = LevelSelectPane.class;
-            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            Method m = LEVEL_SELECT_CLAZZ.getDeclaredMethod("commitMapDirectoryChange", File.class);
             m.setAccessible(true);
 
             Parent currentRoot = SceneManager.getInstance().getStage().getScene().getRoot();
@@ -264,8 +267,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().getParent().toAbsolutePath();
 
-            Class<?> clazz = LevelSelectPane.class;
-            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            Method m = LEVEL_SELECT_CLAZZ.getDeclaredMethod("commitMapDirectoryChange", File.class);
             m.setAccessible(true);
 
             Platform.runLater(() -> {
@@ -286,8 +288,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().toAbsolutePath();
 
-            Class<?> clazz = LevelSelectPane.class;
-            Method m = clazz.getDeclaredMethod("commitMapDirectoryChange", File.class);
+            Method m = LEVEL_SELECT_CLAZZ.getDeclaredMethod("commitMapDirectoryChange", File.class);
             m.setAccessible(true);
 
             Platform.runLater(() -> {
@@ -388,12 +389,11 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-        Class<?> clazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = clazz.getDeclaredField("levelNameLabel");
-            Field timerField = clazz.getDeclaredField("timerLabel");
-            Field numMovesField = clazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = clazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+            Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+            Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+            Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
@@ -512,12 +512,11 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-        Class<?> clazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = clazz.getDeclaredField("levelNameLabel");
-            Field timerField = clazz.getDeclaredField("timerLabel");
-            Field numMovesField = clazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = clazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+            Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+            Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+            Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
@@ -597,13 +596,11 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
-        Class<?> gpClazz = GameplayPane.class;
-        Class<?> gpInfoClazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = gpInfoClazz.getDeclaredField("levelNameLabel");
-            Field timerField = gpInfoClazz.getDeclaredField("timerLabel");
-            Field numMovesField = gpInfoClazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = gpInfoClazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+            Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+            Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+            Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
@@ -618,7 +615,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             // Alert.showAndWait will fail in Travis CI. skip it
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Method m = gpClazz.getDeclaredMethod("doRestartAction");
+                Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doRestartAction");
                 m.setAccessible(true);
 
                 Platform.runLater(() -> {
@@ -650,7 +647,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             assertNotNull(dialog);
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-                Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doReturnToLevelSelectMenu");
                 m.setAccessible(true);
 
                 Platform.runLater(() -> {
@@ -716,9 +713,8 @@ public class PlayingTheGameTest extends ApplicationTest {
         assertNotNull(dialog);
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            Class<?> gpClazz = GameplayPane.class;
             try {
-                Method m = gpClazz.getDeclaredMethod("doLoadNextLevel");
+                Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doLoadNextLevel");
                 m.setAccessible(true);
 
                 Platform.runLater(() -> {
@@ -736,12 +732,11 @@ public class PlayingTheGameTest extends ApplicationTest {
         }
         waitForFxEvents();
 
-        Class<?> clazz = GameplayInfoPane.class;
         try {
-            Field levelNameField = clazz.getDeclaredField("levelNameLabel");
-            Field timerField = clazz.getDeclaredField("timerLabel");
-            Field numMovesField = clazz.getDeclaredField("numMovesLabel");
-            Field numRestartsField = clazz.getDeclaredField("numRestartsLabel");
+            Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
+            Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
+            Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
+            Field numRestartsField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numRestartsLabel");
 
             levelNameField.setAccessible(true);
             timerField.setAccessible(true);
@@ -795,9 +790,8 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         // Alert.showAndWait will fail in Travis CI. skip it
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            Class<?> gpClazz = GameplayPane.class;
             try {
-                Method m = gpClazz.getDeclaredMethod("doReturnToLevelSelectMenu");
+                Method m = GAMEPLAY_CLAZZ.getDeclaredMethod("doReturnToLevelSelectMenu");
                 m.setAccessible(true);
 
                 Platform.runLater(() -> {
