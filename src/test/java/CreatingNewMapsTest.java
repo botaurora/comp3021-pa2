@@ -193,11 +193,15 @@ public class CreatingNewMapsTest extends ApplicationTest {
 
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
+        // Select Player on Destination brush, and click somewhere on the grid.
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_DEST);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, -64.0, -64.0));
         waitForFxEvents();
+
+        // Then, select Player on Tile brush, and click elsewhere.
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
@@ -211,6 +215,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
+            // Ensure that...
             assertEquals(LevelEditorCanvas.Brush.DEST, map[0][0]);
             assertEquals(LevelEditorCanvas.Brush.PLAYER_ON_TILE, map[4][4]);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -237,10 +242,15 @@ public class CreatingNewMapsTest extends ApplicationTest {
 
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
+        // Select Player on Tile brush, and click somewhere on the grid.
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, -64.0, -64.0));
+
+        // Then, using the same brush, click elsewhere.
+
         clickOn(offset(canvasNode, 64.0, 64.0));
         waitForFxEvents();
 
@@ -249,6 +259,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
+            // Ensure that...
             assertEquals(LevelEditorCanvas.Brush.TILE, map[0][0]);
             assertEquals(LevelEditorCanvas.Brush.PLAYER_ON_TILE, map[4][4]);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -265,6 +276,8 @@ public class CreatingNewMapsTest extends ApplicationTest {
         setBoardSize(5, 5);
 
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
+
+        // Select Player on Tile brush, and click the top left location.
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
@@ -294,6 +307,8 @@ public class CreatingNewMapsTest extends ApplicationTest {
         // technically, i need to reset the map to the state of Condition D, so...
         placePlayerOnTopLeft();
 
+        // Without exiting the level editor, change map dimensions to 4 by 4, and click new grid.
+
         setBoardSize(4, 4);
 
         try {
@@ -301,6 +316,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
+            // Ensure that...
             assertEquals(4, map.length);
             for (LevelEditorCanvas.Brush[] b : map) {
                 assertEquals(4, b.length);
@@ -327,11 +343,15 @@ public class CreatingNewMapsTest extends ApplicationTest {
 
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
 
+        // Select Crate on Tile brush, and click the top left location (where the player used to be).
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_TILE);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, -48.0, -48.0));
         waitForFxEvents();
+
+        // Now, select Player on Tile brush, and place player on bottom right corner.
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
@@ -344,6 +364,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
             mapField.setAccessible(true);
             final LevelEditorCanvas.Brush[][] map = (LevelEditorCanvas.Brush[][]) mapField.get(canvas);
 
+            // Ensure that...
             assertEquals(LevelEditorCanvas.Brush.CRATE_ON_TILE, map[0][0]);
             assertEquals(LevelEditorCanvas.Brush.PLAYER_ON_TILE, map[3][3]);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -371,13 +392,19 @@ public class CreatingNewMapsTest extends ApplicationTest {
         @SuppressWarnings("unchecked") final ListView<LevelEditorCanvas.Brush> listView = (ListView<LevelEditorCanvas.Brush>) listViewNode;
         Stage dialog;
 
+        // Having fewer than 1 crate/destination pair
+
         setBoardSize(null, null);
         clickOn(saveNode);
 
+        // Ensure that...
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         type(KeyCode.SPACE);
+
+        // Imbalanced number of crates and destinations. Ensure that Crate on Destination, Player on Destination, Crate
+        // on Tile, and Destination are all used
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_DEST);
         waitForFxEvents();
@@ -406,11 +433,14 @@ public class CreatingNewMapsTest extends ApplicationTest {
         clickOn(saveNode);
         waitForFxEvents();
 
+        // Ensure that...
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         type(KeyCode.SPACE);
         waitForFxEvents();
+
+        // Map without a player
 
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.TILE);
         waitForFxEvents();
@@ -421,11 +451,14 @@ public class CreatingNewMapsTest extends ApplicationTest {
         clickOn(saveNode);
         waitForFxEvents();
 
+        // Ensure that...
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         type(KeyCode.SPACE);
         waitForFxEvents();
+
+        // Map dimensions smaller than 3x3
 
         setBoardSize(1, 3);
 
@@ -450,6 +483,7 @@ public class CreatingNewMapsTest extends ApplicationTest {
         clickOn(saveNode);
         waitForFxEvents();
 
+        // Ensure that...
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 

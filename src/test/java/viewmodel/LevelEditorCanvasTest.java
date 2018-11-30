@@ -184,17 +184,23 @@ public class LevelEditorCanvasTest extends ApplicationTest {
         clickOn(offset(canvasNode, -32.0, -32.0));
         waitForFxEvents();
 
+        // WALL now on tile (0, 0)
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.CRATE_ON_DEST);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, 0.0, 0.0));
         waitForFxEvents();
 
+        // CRATE_ON_DEST now on (1, 1)
+
         listView.getSelectionModel().select(LevelEditorCanvas.Brush.PLAYER_ON_TILE);
         waitForFxEvents();
 
         clickOn(offset(canvasNode, 32.0, 32.0));
         waitForFxEvents();
+
+        // PLAYER_ON_TILE now on (2, 2)
 
         try {
             Method m = LEVEL_EDITOR_CANVAS_CLAZZ.getDeclaredMethod("exportToFile", File.class);

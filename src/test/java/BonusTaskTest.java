@@ -51,12 +51,15 @@ public class BonusTaskTest extends ApplicationTest {
     private static final KeyCode[] MAP1_WIN_MOVES = {
             KeyCode.A,
             KeyCode.A,
+            // first crate in
             KeyCode.D,
             KeyCode.W,
             KeyCode.W,
+            // second crate in
             KeyCode.S,
             KeyCode.D,
             KeyCode.D,
+            // third crate in
             KeyCode.A,
             KeyCode.S,
             KeyCode.S
@@ -84,19 +87,23 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S,
             KeyCode.A,
             KeyCode.A,
+            // first crate in
             KeyCode.D,
             KeyCode.D,
             KeyCode.W,
             KeyCode.W,
             KeyCode.A,
             KeyCode.S,
+            // second crate in
             KeyCode.A,
+            // third crate in
             KeyCode.D,
             KeyCode.W,
             KeyCode.W,
             KeyCode.A,
             KeyCode.S,
             KeyCode.S,
+            // fourth crate in
             KeyCode.W,
             KeyCode.W,
             KeyCode.W,
@@ -133,12 +140,14 @@ public class BonusTaskTest extends ApplicationTest {
             KeyCode.S,
             KeyCode.A,
             KeyCode.W,
+            // first crate in
             KeyCode.D,
             KeyCode.D,
             KeyCode.D,
             KeyCode.S,
             KeyCode.A,
             KeyCode.A,
+            // second crate in
             KeyCode.D,
             KeyCode.D,
             KeyCode.D,
@@ -300,6 +309,8 @@ public class BonusTaskTest extends ApplicationTest {
      */
     @Test
     void testBonusTask1() {
+        // Load the maps from the "maps" folder: Done in setupEach
+
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(levelSelectRoot instanceof LevelSelectPane);
 
@@ -316,6 +327,8 @@ public class BonusTaskTest extends ApplicationTest {
                 .filter(it -> it instanceof Button && ((Button) it).getText().equals("Play"))
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
+
+        // Select 01-easy.txt and start playing
 
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("01-easy.txt");
@@ -335,11 +348,14 @@ public class BonusTaskTest extends ApplicationTest {
                 .orElseThrow(PropertyNotFoundException::new);
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
+        // Delete 02-easy.txt
         try {
             Files.move(Paths.get(mapsPath.toString(), "02-easy.txt"), Paths.get(mapsPath.getParent().toString(), "02-easy.txt"));
         } catch (IOException e) {
             fail();
         }
+
+        // Win 01-easy and go to the next level
 
         type(MAP1_WIN_MOVES);
         waitForFxEvents();
@@ -367,6 +383,8 @@ public class BonusTaskTest extends ApplicationTest {
         }
         waitForFxEvents();
 
+        // The game should popup a dialog warning that 02-easy is missing
+
         dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
@@ -374,6 +392,8 @@ public class BonusTaskTest extends ApplicationTest {
         waitForFxEvents();
 
         try {
+            // The game should then load 03-easy.txt
+
             Field levelNameField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("levelNameLabel");
             Field timerField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("timerLabel");
             Field numMovesField = GAMEPLAY_INFO_CLAZZ.getDeclaredField("numMovesLabel");
@@ -421,6 +441,8 @@ public class BonusTaskTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
+        // Start a game
+
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("02-easy.txt");
 
@@ -430,14 +452,18 @@ public class BonusTaskTest extends ApplicationTest {
         Parent gameplayRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(gameplayRoot instanceof GameplayPane);
 
+        // Push one crate to a non-destination location where the crate cannot be further moved
+
         type(MAP2_DEADLOCK_MOVES);
         waitForFxEvents();
+
+        // The game should report a deadlock
 
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
-            System.out.println("CI environment detected: Skipping dialog");
+            System.out.println("CI environment detected: Skipping dialog dismissal");
         } else {
             type(KeyCode.SPACE);
         }
@@ -456,6 +482,9 @@ public class BonusTaskTest extends ApplicationTest {
      */
     @Test
     void testBonusTask4() {
+        // Prepare a folder containing invalid maps such as random text files: 00-invalid.txt
+        // Start the game and let the game load the folder: File already in folder
+
         Parent levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertTrue(levelSelectRoot instanceof LevelSelectPane);
 
@@ -469,9 +498,13 @@ public class BonusTaskTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
+        // Select an invalid map
+
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         Platform.runLater(() -> listView.getSelectionModel().select("00-invalid.txt"));
         waitForFxEvents();
+
+        // An alert should popup and warns that this is an invalid map
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             System.out.println("CI environment detected: Skipping check for dialog");
@@ -482,6 +515,8 @@ public class BonusTaskTest extends ApplicationTest {
             Platform.runLater(() -> getTopModalStage().ifPresent(Stage::close));
             waitForFxEvents();
         }
+
+        // The map should be removed from the list
 
         assertEquals(0, listView.getItems().filtered(it -> it.equals("00-invalid.txt")).size());
     }
@@ -516,6 +551,8 @@ public class BonusTaskTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
+        // Start a game
+
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("01-easy.txt");
 
@@ -547,6 +584,8 @@ public class BonusTaskTest extends ApplicationTest {
         List<Crate> initialCrates = new ArrayList<>();
         levelManager.getGameLevel().getMap().getCrates().forEach(it -> initialCrates.add(it.clone()));
 
+        // Make some moves
+
         type(KeyCode.A);
         waitForFxEvents();
 
@@ -566,6 +605,8 @@ public class BonusTaskTest extends ApplicationTest {
         type(KeyCode.A);
         waitForFxEvents();
 
+        // Click undo once and it should undo one move
+
         clickOn(undoNode);
         waitForFxEvents();
 
@@ -583,6 +624,8 @@ public class BonusTaskTest extends ApplicationTest {
 
         assertTrue(levelManager.getGameLevel().getMap().getCrates().stream().allMatch(it -> crates.stream().anyMatch(c -> it.getR() == c.getR() && it.getC() == c.getC())));
 
+        // Make some moves
+
         type(
                 KeyCode.A,
                 KeyCode.D,
@@ -590,6 +633,8 @@ public class BonusTaskTest extends ApplicationTest {
                 KeyCode.W,
                 KeyCode.S
         );
+
+        // Click undo until it goes back to the initial state of the game
 
         while (!undoButton.isDisabled()) {
             clickOn(undoButton);
@@ -653,6 +698,8 @@ public class BonusTaskTest extends ApplicationTest {
                 .findFirst()
                 .orElseThrow(PropertyNotFoundException::new);
 
+        // On Level Select screen, choose /assets/maps/ as the Map Directory and choose "03-easy.txt" to play.
+
         @SuppressWarnings("unchecked") final ListView<String> listView = (ListView<String>) levelsListViewNode;
         listView.getSelectionModel().select("03-easy.txt");
 
@@ -672,11 +719,15 @@ public class BonusTaskTest extends ApplicationTest {
                     .orElseThrow(PropertyNotFoundException::new);
             GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
+            // Play the game to clear "03-easy.txt" level.
+
             type(MAP3_WIN_MOVES);
             waitForFxEvents();
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
+
+            // When the level clear pop-up appears, choose "Next level" to go to "04-easy.txt" map.
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 try {
@@ -717,8 +768,12 @@ public class BonusTaskTest extends ApplicationTest {
                 fail();
             }
 
+            // Play the game to clear "04-easy.txt" level.
+
             type(MAP4_WIN_MOVES);
             waitForFxEvents();
+
+            // When the level clear pop-up appears, choose "Return".
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
@@ -744,10 +799,16 @@ public class BonusTaskTest extends ApplicationTest {
             waitForFxEvents();
         }
 
+        // Now the program should return to Level Select screen, while the level "04-easy.txt" is highlighted in the
+        // ListView and rendered on the previewing Canvas.
+
         levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertEquals(levelSelectRoot, SceneManager.getInstance().getStage().getScene().getRoot());
 
         assertEquals("04-easy.txt", listView.getSelectionModel().selectedItemProperty().get());
+
+        // Click on "Play" to play "04-easy.txt". The program should go to the Gameplay screen where its user can play
+        // "04-easy.txt".
 
         clickOn(playNode);
         waitForFxEvents();
@@ -765,8 +826,12 @@ public class BonusTaskTest extends ApplicationTest {
                     .orElseThrow(PropertyNotFoundException::new);
             GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
+            // Play the game to clear this level again.
+
             type(MAP4_WIN_MOVES);
             waitForFxEvents();
+
+            // When the level clear pop-up appears this time, choose "Next level" to go to "05-normal.txt" map.
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
@@ -810,11 +875,15 @@ public class BonusTaskTest extends ApplicationTest {
                 fail();
             }
 
+            // Play the game but make moves to get the game deadlocked.
+
             type(MAP5_DEADLOCK_MOVES);
             waitForFxEvents();
 
             dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
+
+            // When the level deadlocked pop-up appears, choose "Return".
 
             if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
                 try {
@@ -836,6 +905,9 @@ public class BonusTaskTest extends ApplicationTest {
             }
             waitForFxEvents();
         }
+
+        // Now the program should return to Level Select screen, while the level "05-normal.txt" is highlighted in the
+        // ListView and rendered on the previewing Canvas.
 
         levelSelectRoot = SceneManager.getInstance().getStage().getScene().getRoot();
         assertEquals(levelSelectRoot, SceneManager.getInstance().getStage().getScene().getRoot());

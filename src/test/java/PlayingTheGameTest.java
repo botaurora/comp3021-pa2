@@ -331,12 +331,17 @@ public class PlayingTheGameTest extends ApplicationTest {
         final ByteArrayOutputStream stderrContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(stderrContent));
 
+        // Click `Choose map directory`
+
         clickOn(chooseDirNode);
         WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
+
+        // but cancel without selecting a directory
 
         type(KeyCode.ESCAPE);
         WaitForAsyncUtils.sleep(1, TimeUnit.SECONDS);
 
+        // Ensure that...
         assertTrue(stderrContent.toString().isEmpty());
     }
 
@@ -418,6 +423,7 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             String timerFieldValue = ((Label) timerField.get(infoPane)).getText();
 
+            // Ensure that...
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
             assertEquals("Moves: 0", ((Label) numMovesField.get(infoPane)).getText());
@@ -556,9 +562,12 @@ public class PlayingTheGameTest extends ApplicationTest {
 
             String timerFieldValue = ((Label) timerField.get(infoPane)).getText();
 
+            // Restart the game
+
             clickOn(restartNode);
             waitForFxEvents();
 
+            // Ensure that...
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
             assertNotEquals(timerFieldValue, ((Label) timerField.get(infoPane)).getText());
@@ -644,8 +653,12 @@ public class PlayingTheGameTest extends ApplicationTest {
             numMovesField.setAccessible(true);
             numRestartsField.setAccessible(true);
 
+            // Deadlock the level
+
             type(DEADLOCK_MOVES_1);
             waitForFxEvents();
+
+            // The deadlock popup shows
 
             Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
             assertNotNull(dialog);
@@ -665,6 +678,8 @@ public class PlayingTheGameTest extends ApplicationTest {
                 type(KeyCode.SPACE);
             }
             waitForFxEvents();
+
+            // The restart option works as described above
 
             assertEquals("Level: 02-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
@@ -757,11 +772,17 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayInfoPane infoPane = ((GameplayInfoPane) infoNode);
 
+        // Win the level, and ensure
+
         type(WIN_MOVES);
         waitForFxEvents();
 
+        // Ensure the level clear popup shows
+
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
+
+        // Click Next Level
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             try {
@@ -794,6 +815,7 @@ public class PlayingTheGameTest extends ApplicationTest {
             numMovesField.setAccessible(true);
             numRestartsField.setAccessible(true);
 
+            // Ensure that...
             assertEquals("Level: 03-easy.txt", ((Label) levelNameField.get(infoPane)).getText());
             assertTrue(((Label) timerField.get(infoPane)).getText().startsWith("Time: 00:0"));
             assertEquals("Moves: 0", ((Label) numMovesField.get(infoPane)).getText());
@@ -811,7 +833,6 @@ public class PlayingTheGameTest extends ApplicationTest {
      * <li>The level clear popup shows</li>
      * <li>Click Quit to Menu, and ensure:</li>
      * <ul>
-     * <li>A popup shows, asking if you're sure about returning to the menu</li>
      * <li>Clicking OK brings you back to the menu</li>
      * </ul>
      * </ul>
@@ -846,11 +867,17 @@ public class PlayingTheGameTest extends ApplicationTest {
 
         GameplayPane gameplayPane = ((GameplayPane) gameplayRoot);
 
+        // Win the level
+
         type(WIN_MOVES);
         waitForFxEvents();
 
+        // Ensure the level clear popup shows
+
         Stage dialog = getTopModalStage().orElseThrow(NoSuchElementException::new);
         assertNotNull(dialog);
+
+        // Click Quit to Menu
 
         if (System.getenv("CI") != null && System.getenv("CI").equals("true")) {
             try {
