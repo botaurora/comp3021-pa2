@@ -141,8 +141,6 @@ public class LevelSelectPane extends BorderPane {
             }
         });
         levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("oldValue = " + oldValue + " newValue = " + newValue);
-
             if (newValue == null || levelsListView.getItems().stream().noneMatch(it -> it.equals(newValue))) {
                 levelPreview.setWidth(0);
                 levelPreview.setHeight(0);
