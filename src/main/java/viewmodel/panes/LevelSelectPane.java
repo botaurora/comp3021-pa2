@@ -1,5 +1,6 @@
 package viewmodel.panes;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -141,7 +142,9 @@ public class LevelSelectPane extends BorderPane {
             }
         });
         levelsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
+            System.out.println("oldValue = " + oldValue + " newValue = " + newValue);
+
+            if (newValue == null || levelsListView.getItems().stream().noneMatch(it -> it.equals(newValue))) {
                 levelPreview.setWidth(0);
                 levelPreview.setHeight(0);
                 return;
@@ -162,8 +165,10 @@ public class LevelSelectPane extends BorderPane {
                     box.showAndWait();
                 }
 
-                levelsListView.getSelectionModel().clearSelection();
-                levelsListView.getItems().remove(newValue);
+                Platform.runLater(() -> {
+                    levelsListView.getSelectionModel().clearSelection();
+                    levelsListView.getItems().remove(newValue);
+                });
             }
         });
     }
@@ -184,7 +189,7 @@ public class LevelSelectPane extends BorderPane {
 
     /**
      * Helper function to commit the directory change to {@link LevelManager}.
-     *
+     * <p>
      * Used as a convenience function for test cases to switch between directories.
      *
      * @param dir Directory where map files should be loaded from.
