@@ -50,7 +50,6 @@ public class LevelSelectPane extends BorderPane {
         styleComponents();
         setCallbacks();
 
-        // TODO(Derppening): Write this in report
         try {
             Path testPath = Paths.get(Thread.currentThread().getContextClassLoader().getResource("assets/maps/01-easy.txt").toURI());
             Path actualPath = testPath.getParent().toAbsolutePath();
